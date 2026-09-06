@@ -1214,7 +1214,18 @@ body.dark-mode footer{background:#080b0f!important;}
   .theme-toggle .theme-thumb{width:28px;height:28px;}
   body.light-mode .theme-toggle .theme-thumb{transform:translateX(28px);}
 }
-
+@media (max-width: 560px) {
+  .brand-copy strong {
+    font-size: 0.85rem !important; /* تصغير خط العنوان ليناسب الجوال */
+    white-space: nowrap;
+  }
+  .brand-copy small {
+    font-size: 0.6rem !important; /* تصغير النص الفرعي تحته */
+  }
+  .header-inner {
+    gap: 8px !important; /* تقليل المسافة بين اللوجو وباقي العناصر */
+  }
+}
 </style>
 </head>
 <body>
@@ -1510,7 +1521,7 @@ body.dark-mode footer{background:#080b0f!important;}
 </section>
 
 <footer>
-    <p>Antibiogram Desk &copy; 2026 | Created &amp; Developed by <strong>Soha Salah · Pharmacist</strong></p>
+    <p>Antibiogram Desk &copy; 2026 | Created &amp; Developed by <strong>Soha Salah</strong></p>
 </footer>
 
 <script>
