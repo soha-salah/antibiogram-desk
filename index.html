@@ -1,0 +1,2070 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Antibiogram Desk | Clinical Guide & Dosing Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root{
+  --primary-red:#d32f2f;
+  --primary-dark-red:#9a0007;
+  --accent-dark:#343a40;
+  --header-gray:#343a40;
+  --header-gray-2:#2b3035;
+  --light-bg:#f4f6f8;
+  --card-bg:#fff;
+  --text-main:#1f2937;
+  --text-muted:#6b7280;
+  --border-color:#e5e7eb;
+  --shadow:0 10px 30px rgba(15,23,42,.07);
+  --shadow-hover:0 20px 45px rgba(15,23,42,.12);
+  --radius:16px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--light-bg);color:var(--text-main);
+  font-family:'Inter',system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  display:flex;flex-direction:column;min-height:100vh;overflow-x:hidden;
+}
+button,input,select{font:inherit}
+button{border:0}
+::selection{background:rgba(211,47,47,.18);color:var(--accent-dark)}
+
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;
+  background:radial-gradient(circle at 20% 0%,rgba(211,47,47,.045),transparent 32%),
+             radial-gradient(circle at 90% 15%,rgba(52,58,64,.05),transparent 28%);
+}
+
+/* =========================
+   PREMIUM GRAY HEADER
+========================= */
+header{
+  position:sticky;top:0;z-index:900;
+  width:100%;
+  background:rgba(52,58,64,.96);
+  color:#fff;
+  padding:18px clamp(18px,4vw,56px);
+  border-bottom:1px solid rgba(255,255,255,.08);
+  box-shadow:0 8px 28px rgba(0,0,0,.16);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  transform:translateY(-100%);
+  opacity:0;
+  animation:headerReveal .9s cubic-bezier(.22,1,.36,1) .08s forwards;
+  transition:padding .35s ease,background .35s ease,box-shadow .35s ease;
+}
+header.scrolled{
+  padding-top:10px;padding-bottom:10px;
+  background:rgba(52,58,64,.9);
+  box-shadow:0 12px 34px rgba(0,0,0,.22);
+}
+.header-inner{
+  max-width:1250px;margin:auto;
+  min-height:58px;display:flex;align-items:center;
+  justify-content:space-between;gap:24px;
+}
+.logo-container{
+  display:flex;align-items:center;gap:13px;
+  text-decoration:none;color:inherit;min-width:0;
+  transform:translateX(-18px);opacity:0;
+  animation:brandIn .75s cubic-bezier(.22,1,.36,1) .45s forwards;
+}
+.logo-svg{width:43px;height:55px;flex:0 0 auto;filter:drop-shadow(0 5px 10px rgba(0,0,0,.22))}
+.brand-text{display:flex;flex-direction:column;text-align:left;line-height:1}
+.brand-title{font-size:clamp(1.15rem,2vw,1.55rem);font-weight:800;letter-spacing:1.8px;color:#fff}
+.brand-subtitle{
+  font-size:.68rem;font-weight:800;letter-spacing:5px;color:#ff6b6b;
+  margin-top:6px;display:flex;align-items:center;white-space:nowrap;
+}
+.brand-subtitle::before,.brand-subtitle::after{
+  content:"";height:1px;background:rgba(255,255,255,.45);flex:1;margin:0 6px;
+}
+header p.tagline{
+  color:rgba(255,255,255,.68);font-size:.75rem;font-weight:500;
+  text-align:right;max-width:440px;line-height:1.45;
+  transform:translateX(18px);opacity:0;
+  animation:brandInRight .75s cubic-bezier(.22,1,.36,1) .58s forwards;
+}
+.mobile-menu-btn{
+  display:none;width:44px;height:44px;border-radius:12px;
+  background:rgba(255,255,255,.08);color:#fff;cursor:pointer;
+  align-items:center;justify-content:center;font-size:1.1rem;
+  transition:.25s ease;
+}
+.mobile-menu-btn:hover{background:var(--primary-red);transform:translateY(-2px)}
+.header-nav{
+  display:flex;align-items:center;gap:8px;
+}
+.header-nav a{
+  color:rgba(255,255,255,.78);text-decoration:none;
+  font-size:.8rem;font-weight:600;padding:9px 12px;border-radius:10px;
+  transition:.25s ease;
+}
+.header-nav a:hover{color:#fff;background:rgba(255,255,255,.08)}
+
+/* =========================
+   PAGE
+========================= */
+.container{
+  max-width:1250px;margin:0 auto;padding:30px 20px 60px;
+  flex:1;width:100%;
+}
+.instruction-banner{
+  background:linear-gradient(135deg,#fff7f7,#fff);
+  border:1px solid rgba(211,47,47,.15);
+  border-left:4px solid var(--primary-red);
+  padding:14px 18px;border-radius:12px;margin-bottom:24px;
+  display:flex;align-items:center;gap:12px;color:var(--primary-dark-red);
+  font-size:.88rem;font-weight:600;box-shadow:var(--shadow);
+  opacity:0;transform:translateY(20px);
+  animation:riseIn .7s cubic-bezier(.22,1,.36,1) .8s forwards;
+}
+.instruction-banner i{font-size:1rem}
+
+/* Tabs */
+.tabs{
+  display:flex;justify-content:center;gap:10px;margin-bottom:24px;flex-wrap:wrap;
+  position:sticky;top:92px;z-index:100;
+  padding:7px;border-radius:15px;
+  background:rgba(244,246,248,.82);backdrop-filter:blur(12px);
+}
+.tab-btn{
+  background:#e6e8eb;border:1px solid transparent;padding:12px 19px;border-radius:11px;
+  font-weight:700;font-size:.88rem;cursor:pointer;color:var(--accent-dark);
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:transform .25s ease,background .25s ease,color .25s ease,box-shadow .25s ease;
+}
+.tab-btn.active,.tab-btn:hover{
+  background:var(--primary-red);color:#fff;
+  box-shadow:0 8px 20px rgba(211,47,47,.22);transform:translateY(-2px);
+}
+.tab-content{display:none}
+.tab-content.active{display:block;animation:contentReveal .55s cubic-bezier(.22,1,.36,1)}
+
+/* Filters */
+.filter-card{
+  background:var(--card-bg);padding:20px;border-radius:var(--radius);
+  box-shadow:var(--shadow);margin-bottom:24px;border:1px solid var(--border-color);
+}
+.filter-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.filter-group{display:flex;flex-direction:column;gap:7px}
+.filter-group label{font-size:.82rem;font-weight:700;color:var(--accent-dark)}
+select,input{
+  padding:12px 14px;border:1px solid var(--border-color);border-radius:10px;
+  font-size:.9rem;outline:none;width:100%;background:#fff;color:var(--text-main);
+  transition:border-color .25s ease,box-shadow .25s ease,transform .25s ease;
+}
+select:focus,input:focus{
+  border-color:var(--primary-red);box-shadow:0 0 0 4px rgba(211,47,47,.09);
+}
+
+/* Drug cards */
+.drugs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px}
+.drug-card{
+  background:var(--card-bg);border:1px solid var(--border-color);border-radius:var(--radius);
+  overflow:hidden;box-shadow:var(--shadow);
+  transition:transform .35s cubic-bezier(.22,1,.36,1),box-shadow .35s ease,border-color .35s ease;
+  display:flex;flex-direction:column;cursor:pointer;position:relative;
+  opacity:0;transform:translateY(24px);
+  animation:cardReveal .65s cubic-bezier(.22,1,.36,1) forwards;
+}
+.drug-card::after{
+  content:"";position:absolute;inset:auto 0 0;height:3px;
+  background:linear-gradient(90deg,var(--primary-red),#ff7b7b);
+  transform:scaleX(0);transform-origin:left;transition:transform .35s ease;
+}
+.drug-card:hover{
+  transform:translateY(-7px);box-shadow:var(--shadow-hover);
+  border-color:rgba(211,47,47,.32);
+}
+.drug-card:hover::after{transform:scaleX(1)}
+.drug-card-header{
+  background:#fafafa;padding:12px 16px;border-bottom:1px solid var(--border-color);
+  display:flex;justify-content:space-between;align-items:center;gap:8px;
+}
+.drug-class-badge{
+  font-size:.68rem;font-weight:800;background:var(--accent-dark);color:#fff;
+  padding:5px 8px;border-radius:6px;text-transform:uppercase;letter-spacing:.3px
+}
+.click-hint{font-size:.72rem;color:var(--primary-red);font-weight:700;display:flex;align-items:center;gap:4px}
+.drug-info{padding:18px;flex-grow:1;display:flex;flex-direction:column;justify-content:space-between;gap:14px}
+.drug-name{font-size:1.05rem;font-weight:800;color:var(--primary-red)}
+.drug-active{font-size:.83rem;color:var(--text-muted);font-weight:500;margin-top:4px}
+.drug-meta{
+  display:flex;justify-content:space-between;align-items:center;gap:8px;
+  font-size:.75rem;border-top:1px solid var(--border-color);padding-top:12px
+}
+.badge-form{background:#fee2e2;color:var(--primary-dark-red);padding:5px 9px;border-radius:999px;font-weight:700}
+.company-name{color:var(--accent-dark);font-weight:700;text-align:right}
+
+/* Table */
+.table-responsive{
+  overflow-x:auto;background:var(--card-bg);border-radius:var(--radius);
+  box-shadow:var(--shadow);border:1px solid var(--border-color)
+}
+table{width:100%;border-collapse:collapse;text-align:left;min-width:720px}
+th,td{padding:14px 18px;border-bottom:1px solid var(--border-color);font-size:.86rem}
+th{background:var(--accent-dark);color:#fff;font-weight:700;position:sticky;top:0}
+tbody tr{transition:background .2s ease}
+tbody tr:hover{background:#fafafa}
+.sens-high{background:#dcfce7;color:#15803d;font-weight:700}
+.sens-med{background:#fef9c3;color:#a16207;font-weight:700}
+.sens-low{background:#fee2e2;color:#b91c1c;font-weight:700}
+
+/* Calculator */
+.calc-box{
+  background:var(--card-bg);padding:30px;border-radius:var(--radius);
+  box-shadow:var(--shadow);max-width:600px;margin:0 auto;border:1px solid var(--border-color)
+}
+.calc-box h3{color:var(--accent-dark);margin-bottom:24px;text-align:center;font-size:1.08rem}
+.calc-group{margin-bottom:16px}
+.calc-group label{display:block;margin-bottom:7px;font-weight:700;font-size:.85rem;color:var(--accent-dark)}
+.calc-btn{
+  width:100%;background:var(--primary-red);color:#fff;padding:13px;border:none;
+  border-radius:10px;font-size:.94rem;font-weight:800;cursor:pointer;
+  transition:transform .25s ease,background .25s ease,box-shadow .25s ease;margin-top:8px
+}
+.calc-btn:hover{background:var(--primary-dark-red);transform:translateY(-2px);box-shadow:0 10px 24px rgba(211,47,47,.22)}
+.calc-result{
+  margin-top:20px;padding:16px;border-radius:10px;background:#fee2e2;
+  color:var(--primary-dark-red);display:none;text-align:center;font-weight:700;line-height:1.6;
+  animation:riseIn .4s ease
+}
+
+/* Modal */
+.modal-overlay{
+  display:flex;position:fixed;inset:0;background:rgba(15,23,42,.72);
+  backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);z-index:1000;
+  justify-content:center;align-items:center;padding:18px;overflow-y:auto;
+  opacity:0;visibility:hidden;transition:opacity .3s ease,visibility .3s ease
+}
+.modal-overlay.active{opacity:1;visibility:visible}
+.modal-card{
+  background:#fff;border-radius:18px;max-width:900px;width:100%;max-height:90vh;
+  overflow-y:auto;box-shadow:0 30px 80px rgba(0,0,0,.3);border:1px solid var(--border-color);
+  transform:translateY(30px) scale(.98);opacity:0;transition:.4s cubic-bezier(.22,1,.36,1)
+}
+.modal-overlay.active .modal-card{transform:none;opacity:1}
+.modal-header{
+  background:linear-gradient(135deg,var(--accent-dark),#24282c);color:#fff;padding:20px 24px;
+  display:flex;justify-content:space-between;align-items:flex-start;gap:15px;
+  position:sticky;top:0;z-index:10;border-bottom:3px solid var(--primary-red)
+}
+.modal-header h2{font-size:1.3rem;color:#fff}
+.modal-header p{color:#cbd5e1;font-size:.83rem;margin-top:5px}
+.close-btn{
+  background:rgba(255,255,255,.12);border:none;color:#fff;width:38px;height:38px;
+  border-radius:50%;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;
+  transition:.25s ease;flex:0 0 auto
+}
+.close-btn:hover{background:var(--primary-red);transform:rotate(90deg)}
+.modal-body{padding:24px;display:flex;flex-direction:column;gap:20px}
+.contra-box{background:#fef2f2;border:2px solid #ef4444;border-radius:12px;padding:17px}
+.contra-title{color:#991b1b;font-weight:800;font-size:.9rem;display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.contra-list{margin-left:20px;font-size:.82rem;color:#7f1d1d;line-height:1.65}
+.clinic-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+.info-card{
+  background:#f8fafc;border:1px solid var(--border-color);border-radius:12px;padding:16px;
+  display:flex;flex-direction:column;gap:8px;transition:transform .25s ease,box-shadow .25s ease
+}
+.info-card:hover{transform:translateY(-3px);box-shadow:0 10px 25px rgba(15,23,42,.06)}
+.info-card-title{font-size:.78rem;font-weight:800;color:var(--accent-dark);display:flex;align-items:center;gap:8px;text-transform:uppercase}
+.info-card-title i{color:var(--primary-red);font-size:1rem}
+.info-card-content{font-size:.83rem;color:var(--text-main);line-height:1.55}
+.modal-calc-box{background:#edf2f7;padding:17px;border-radius:12px;border:1px solid #cbd5e1}
+.calc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:10px}
+
+/* Footer: same gray family as header */
+footer{
+  background:var(--header-gray);color:#aeb4ba;text-align:center;padding:22px 16px;
+  font-size:.82rem;border-top:3px solid var(--primary-red);margin-top:auto
+}
+footer strong{color:#fff}
+
+/* Scroll reveal */
+.reveal-on-scroll{opacity:0;transform:translateY(30px);transition:opacity .8s ease,transform .8s cubic-bezier(.22,1,.36,1)}
+.reveal-on-scroll.is-visible{opacity:1;transform:none}
+
+/* Keyframes */
+@keyframes headerReveal{to{transform:none;opacity:1}}
+@keyframes brandIn{to{transform:none;opacity:1}}
+@keyframes brandInRight{to{transform:none;opacity:1}}
+@keyframes riseIn{to{opacity:1;transform:none}}
+@keyframes contentReveal{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@keyframes cardReveal{to{opacity:1;transform:none}}
+
+@media(max-width:900px){
+  header{padding:14px 18px}
+  .header-inner{min-height:52px}
+  header p.tagline{display:none}
+  .header-nav{
+    position:absolute;left:14px;right:14px;top:calc(100% + 8px);
+    background:rgba(52,58,64,.98);border:1px solid rgba(255,255,255,.08);
+    border-radius:14px;padding:8px;display:flex;flex-direction:column;align-items:stretch;
+    opacity:0;visibility:hidden;transform:translateY(-10px);
+    transition:.3s ease;box-shadow:0 18px 40px rgba(0,0,0,.22)
+  }
+  header.menu-open .header-nav{opacity:1;visibility:visible;transform:none}
+  .header-nav a{text-align:center;padding:12px}
+  .mobile-menu-btn{display:flex}
+  .tabs{top:72px;justify-content:flex-start;overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab-btn{flex:0 0 auto}
+}
+@media(max-width:600px){
+  .container{padding:20px 13px 42px}
+  .instruction-banner{font-size:.78rem;padding:12px 13px}
+  .drugs-grid{grid-template-columns:1fr;gap:14px}
+  .filter-card{padding:14px}
+  .filter-grid{grid-template-columns:1fr}
+  .calc-box{padding:20px 16px}
+  .modal-overlay{padding:8px}
+  .modal-card{max-height:94vh;border-radius:14px}
+  .modal-header{padding:16px}
+  .modal-header h2{font-size:1.05rem}
+  .modal-body{padding:16px}
+  .clinic-grid{grid-template-columns:1fr}
+  footer{font-size:.74rem;padding:18px 12px}
+}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  header{transform:none;opacity:1}
+  .logo-container,header p.tagline,.instruction-banner,.drug-card{transform:none;opacity:1}
+}
+
+/* =========================================================
+   PREMIUM POLISH — Antibiogram Desk
+   ========================================================= */
+
+html { scroll-behavior: smooth; }
+body {
+  overflow-x: hidden;
+  background:
+    radial-gradient(circle at 12% 8%, rgba(211,47,47,.045), transparent 26rem),
+    radial-gradient(circle at 88% 30%, rgba(52,58,64,.045), transparent 28rem),
+    #f6f7f8;
+}
+
+::selection {
+  background: rgba(211,47,47,.18);
+  color: #25292d;
+}
+
+.header-inner {
+  position: relative;
+}
+
+.header-inner::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.28), transparent);
+  opacity: .65;
+}
+
+.brand {
+  gap: 11px;
+  transition: transform .45s cubic-bezier(.22,1,.36,1);
+}
+.brand:hover { transform: translateY(-2px); }
+
+.brand-mark {
+  width: 45px;
+  height: 45px;
+  display: grid;
+  place-items: center;
+  filter: drop-shadow(0 8px 18px rgba(0,0,0,.18));
+  transition: transform .5s cubic-bezier(.22,1,.36,1), filter .5s ease;
+}
+.brand-mark svg { width: 100%; height: 100%; display:block; }
+.brand:hover .brand-mark {
+  transform: rotate(-6deg) scale(1.06);
+  filter: drop-shadow(0 10px 22px rgba(211,47,47,.28));
+}
+
+.brand-copy {
+  display:flex;
+  flex-direction:column;
+  line-height:.9;
+  letter-spacing:.08em;
+}
+.brand-copy strong {
+  font-size: 14px;
+  font-weight: 800;
+  color:#fff;
+}
+.brand-copy small {
+  margin-top:5px;
+  font-size:9px;
+  letter-spacing:.28em;
+  color:rgba(255,255,255,.58);
+  font-weight:700;
+}
+
+.nav-link {
+  position: relative;
+  transition: color .3s ease, transform .3s ease, background .3s ease;
+}
+.nav-link::after {
+  content:"";
+  position:absolute;
+  left:50%;
+  bottom:2px;
+  width:0;
+  height:2px;
+  border-radius:10px;
+  background:#ff4a52;
+  transform:translateX(-50%);
+  transition:width .35s cubic-bezier(.22,1,.36,1);
+}
+.nav-link:hover::after,
+.nav-link.active::after { width:18px; }
+
+.header.scrolled {
+  box-shadow: 0 16px 45px rgba(0,0,0,.16);
+}
+.header.scrolled .brand-mark { transform: scale(.93); }
+
+.hero,
+.instruction-banner,
+.filter-card,
+.table-card,
+.calculator-card,
+.drug-card,
+.tabs,
+.about-section {
+  will-change: transform, opacity;
+}
+
+.hero {
+  position:relative;
+  isolation:isolate;
+}
+.hero::before {
+  content:"";
+  position:absolute;
+  width:420px;
+  height:420px;
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(211,47,47,.10), transparent 68%);
+  top:-160px;
+  right:-100px;
+  z-index:-1;
+  animation: floatOrb 9s ease-in-out infinite;
+  pointer-events:none;
+}
+.hero::after {
+  content:"";
+  position:absolute;
+  width:280px;
+  height:280px;
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(52,58,64,.08), transparent 68%);
+  bottom:-100px;
+  left:-100px;
+  z-index:-1;
+  animation: floatOrb 12s ease-in-out infinite reverse;
+  pointer-events:none;
+}
+
+@keyframes floatOrb {
+  0%,100% { transform:translate3d(0,0,0) scale(1); }
+  50% { transform:translate3d(0,18px,0) scale(1.05); }
+}
+
+.reveal-on-scroll {
+  opacity:0;
+  transform:translateY(28px) scale(.985);
+  transition:
+    opacity .85s cubic-bezier(.22,1,.36,1),
+    transform .85s cubic-bezier(.22,1,.36,1);
+}
+.reveal-on-scroll.is-visible {
+  opacity:1;
+  transform:none;
+}
+
+.drug-card {
+  transform: translateY(0);
+  transition:
+    transform .5s cubic-bezier(.22,1,.36,1),
+    box-shadow .5s ease,
+    border-color .35s ease;
+}
+.drug-card:hover {
+  transform:translateY(-8px);
+  box-shadow:0 22px 50px rgba(31,35,39,.12);
+  border-color:rgba(211,47,47,.22);
+}
+
+.drug-card::after {
+  content:"";
+  position:absolute;
+  left:18px;
+  right:18px;
+  bottom:0;
+  height:2px;
+  border-radius:4px 4px 0 0;
+  background:linear-gradient(90deg, transparent, #d32f2f, transparent);
+  transform:scaleX(0);
+  transform-origin:center;
+  transition:transform .5s cubic-bezier(.22,1,.36,1);
+}
+.drug-card:hover::after { transform:scaleX(1); }
+
+.btn,
+button,
+.tab-btn,
+.filter-btn {
+  transition:
+    transform .3s cubic-bezier(.22,1,.36,1),
+    box-shadow .3s ease,
+    background .3s ease,
+    border-color .3s ease;
+}
+.btn:hover,
+button:hover { transform:translateY(-2px); }
+.btn:active,
+button:active { transform:translateY(0) scale(.98); }
+
+.tabs {
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.modal-backdrop {
+  backdrop-filter: blur(9px);
+  -webkit-backdrop-filter: blur(9px);
+}
+
+.modal-content {
+  animation: modalPremium .55s cubic-bezier(.22,1,.36,1);
+}
+@keyframes modalPremium {
+  from { opacity:0; transform:translateY(28px) scale(.94); }
+  to { opacity:1; transform:translateY(0) scale(1); }
+}
+
+/* About / creator section */
+.about-section {
+  position:relative;
+  overflow:hidden;
+  margin-top:72px;
+  padding:92px 24px 104px;
+  background:#343a40;
+  color:#fff;
+  border-top:1px solid rgba(255,255,255,.08);
+  isolation:isolate;
+}
+.about-glow {
+  position:absolute;
+  width:520px;
+  height:520px;
+  border-radius:50%;
+  right:-180px;
+  top:-210px;
+  background:radial-gradient(circle, rgba(211,47,47,.26), transparent 68%);
+  filter:blur(5px);
+  z-index:-1;
+  animation: aboutGlow 10s ease-in-out infinite;
+}
+@keyframes aboutGlow {
+  0%,100% { transform:translate(0,0); opacity:.7; }
+  50% { transform:translate(-30px,25px); opacity:1; }
+}
+.about-inner {
+  max-width:940px;
+  margin:auto;
+}
+.about-kicker {
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.2em;
+  color:#ff6970;
+  margin-bottom:14px;
+}
+.about-section h2 {
+  max-width:720px;
+  margin:0 0 15px;
+  font-size:clamp(32px,5vw,58px);
+  line-height:1.03;
+  letter-spacing:-.035em;
+}
+.about-lead {
+  max-width:640px;
+  margin:0 0 38px;
+  color:rgba(255,255,255,.68);
+  font-size:16px;
+  line-height:1.75;
+}
+.creator-card {
+  display:flex;
+  align-items:center;
+  gap:18px;
+  padding:18px 20px;
+  max-width:650px;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.055);
+  border-radius:22px;
+  box-shadow:0 24px 70px rgba(0,0,0,.18);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  transition:transform .45s cubic-bezier(.22,1,.36,1), border-color .35s ease;
+}
+.creator-card:hover {
+  transform:translateY(-5px);
+  border-color:rgba(255,105,112,.34);
+}
+.creator-avatar {
+  width:66px;
+  height:66px;
+  flex:0 0 66px;
+  display:grid;
+  place-items:center;
+  border-radius:18px;
+  background:linear-gradient(135deg,#ff5961,#b60e18);
+  box-shadow:0 12px 30px rgba(211,47,47,.3);
+}
+.creator-avatar span {
+  font-size:18px;
+  font-weight:900;
+  letter-spacing:.05em;
+}
+.creator-info { min-width:0; }
+.creator-label {
+  display:block;
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.16em;
+  color:rgba(255,255,255,.45);
+  margin-bottom:4px;
+}
+.creator-info h3 {
+  margin:0;
+  font-size:21px;
+  letter-spacing:-.02em;
+}
+.creator-info p {
+  margin:4px 0 0;
+  color:#ff6970;
+  font-weight:700;
+  font-size:13px;
+}
+.creator-seal {
+  margin-left:auto;
+  width:72px;
+  height:72px;
+  flex:0 0 72px;
+  border:1px solid rgba(255,255,255,.16);
+  border-radius:50%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  transform:rotate(8deg);
+  color:rgba(255,255,255,.8);
+}
+.creator-seal span {
+  font-weight:900;
+  font-size:19px;
+}
+.creator-seal small {
+  font-size:6px;
+  letter-spacing:.18em;
+  color:rgba(255,255,255,.45);
+}
+
+.footer {
+  background:#343a40 !important;
+  border-top:1px solid rgba(255,255,255,.08);
+}
+
+/* Mobile premium tuning */
+@media (max-width: 900px) {
+  .brand-mark { width:40px; height:40px; }
+  .brand-copy strong { font-size:12px; }
+  .brand-copy small { font-size:8px; }
+  .about-section { padding:72px 20px 82px; }
+}
+
+@media (max-width: 560px) {
+  .creator-card {
+    align-items:flex-start;
+    padding:16px;
+  }
+  .creator-seal { display:none; }
+  .creator-avatar { width:58px; height:58px; flex-basis:58px; border-radius:16px; }
+  .about-section h2 { font-size:38px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior:auto; }
+  *, *::before, *::after {
+    animation-duration:.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.01ms !important;
+  }
+  .reveal-on-scroll {
+    opacity:1 !important;
+    transform:none !important;
+  }
+}
+
+
+.drug-card, .creator-card, .filter-card {
+  position:relative;
+  overflow:hidden;
+}
+.drug-card::before, .creator-card::before, .filter-card::before {
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:radial-gradient(
+    260px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(255,255,255,.10),
+    transparent 65%
+  );
+  opacity:0;
+  transition:opacity .35s ease;
+}
+.drug-card:hover::before, .creator-card:hover::before, .filter-card:hover::before {
+  opacity:1;
+}
+.scroll-progress {
+  position:fixed;
+  top:0;
+  left:0;
+  width:0;
+  height:3px;
+  z-index:99999;
+  background:linear-gradient(90deg,#ff5b61,#d32f2f);
+  box-shadow:0 1px 10px rgba(211,47,47,.35);
+  pointer-events:none;
+}
+
+
+/* =========================================================
+   2026 PREMIUM UI SYSTEM — pharmacy / clinical aesthetic
+   ========================================================= */
+:root{
+  --primary-red:#c91522;
+  --primary-red-2:#f04450;
+  --primary-dark-red:#8e0d16;
+  --ink:#171b21;
+  --muted:#667085;
+  --surface:#ffffff;
+  --surface-2:#f7f8fa;
+  --line:rgba(18,24,32,.09);
+  --dark:#171b21;
+  --dark-2:#252b33;
+  --glass:rgba(23,27,33,.88);
+  --shadow-soft:0 14px 40px rgba(18,24,32,.07);
+  --shadow-premium:0 28px 80px rgba(18,24,32,.14);
+  --ease:cubic-bezier(.22,1,.36,1);
+}
+
+body{
+  color:var(--ink);
+  background:
+    radial-gradient(circle at 8% 0%, rgba(201,21,34,.055), transparent 26rem),
+    radial-gradient(circle at 95% 22%, rgba(23,27,33,.045), transparent 30rem),
+    #f6f7f9;
+}
+
+.site-header{
+  background:rgba(23,27,33,.91)!important;
+  border-bottom:1px solid rgba(255,255,255,.10);
+  box-shadow:0 14px 45px rgba(0,0,0,.20);
+  padding:13px clamp(14px,4vw,56px)!important;
+  backdrop-filter:blur(22px) saturate(130%);
+  -webkit-backdrop-filter:blur(22px) saturate(130%);
+}
+.site-header.scrolled{
+  padding-top:9px!important;
+  padding-bottom:9px!important;
+  background:rgba(23,27,33,.82)!important;
+}
+.header-inner{max-width:1320px;min-height:56px}
+.header-inner::after{background:linear-gradient(90deg,transparent,rgba(255,255,255,.24),transparent)!important}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  color:#fff;
+  text-decoration:none;
+  transition:transform .45s var(--ease);
+}
+.brand:hover{transform:translateY(-2px)}
+.brand-mark{
+  width:46px!important;height:46px!important;
+  border-radius:15px;
+  display:grid;place-items:center;
+  filter:drop-shadow(0 9px 20px rgba(201,21,34,.28));
+  transition:transform .45s var(--ease),filter .45s ease;
+}
+.brand-mark svg{width:100%;height:100%;display:block}
+.brand:hover .brand-mark{transform:rotate(-4deg) scale(1.055);filter:drop-shadow(0 13px 28px rgba(201,21,34,.38))}
+.brand-copy{line-height:.9;letter-spacing:.055em}
+.brand-copy strong{font-size:14px;font-weight:850;color:#fff}
+.brand-copy small{margin-top:7px;font-size:8px;letter-spacing:.20em;color:rgba(255,255,255,.53);font-weight:750}
+
+.header-nav{
+  display:flex!important;align-items:center;gap:4px;
+  margin-left:auto;
+}
+.header-nav .nav-link{
+  position:relative;
+  display:flex;align-items:center;gap:7px;
+  padding:10px 12px!important;
+  border-radius:11px;
+  color:rgba(255,255,255,.68)!important;
+  font-size:.78rem!important;
+  font-weight:750!important;
+  text-decoration:none;
+  transition:color .3s ease,background .3s ease,transform .3s var(--ease);
+}
+.header-nav .nav-link i{font-size:.78rem;opacity:.82}
+.header-nav .nav-link::after{
+  content:"";position:absolute;left:50%;bottom:3px;width:0;height:2px;
+  border-radius:9px;background:#ff5b65;transform:translateX(-50%);
+  transition:width .35s var(--ease);
+}
+.header-nav .nav-link:hover,
+.header-nav .nav-link.active{
+  color:#fff!important;background:rgba(255,255,255,.075);
+  transform:translateY(-1px);
+}
+.header-nav .nav-link.active::after,
+.header-nav .nav-link:hover::after{width:19px}
+.nav-about{margin-left:2px;border-left:1px solid rgba(255,255,255,.10)!important;padding-left:16px!important}
+
+.tagline{max-width:330px!important;font-size:.70rem!important;color:rgba(255,255,255,.47)!important}
+
+.mobile-menu-btn{
+  border:1px solid rgba(255,255,255,.10)!important;
+  background:rgba(255,255,255,.07)!important;
+  box-shadow:0 7px 20px rgba(0,0,0,.12);
+}
+.mobile-menu-btn:hover{background:var(--primary-red)!important}
+
+.container{max-width:1320px;padding-top:32px}
+.instruction-banner{
+  border:1px solid rgba(201,21,34,.12)!important;
+  border-left:4px solid var(--primary-red)!important;
+  background:rgba(255,255,255,.82)!important;
+  box-shadow:var(--shadow-soft)!important;
+  backdrop-filter:blur(12px);
+}
+
+.tabs{
+  border:1px solid rgba(18,24,32,.07);
+  box-shadow:0 10px 30px rgba(18,24,32,.045);
+  background:rgba(247,248,250,.72)!important;
+}
+.tab-btn{
+  border:1px solid transparent!important;
+  background:transparent!important;
+}
+.tab-btn.active,.tab-btn:hover{
+  background:var(--dark)!important;
+  color:#fff!important;
+  box-shadow:0 10px 24px rgba(23,27,33,.16)!important;
+}
+
+.filter-card,.table-responsive,.calc-box{
+  border:1px solid rgba(18,24,32,.075)!important;
+  box-shadow:var(--shadow-soft)!important;
+  background:rgba(255,255,255,.91)!important;
+  backdrop-filter:blur(12px);
+}
+.filter-card:hover{box-shadow:var(--shadow-premium)!important;transform:translateY(-2px)}
+.drug-card{
+  border-color:rgba(18,24,32,.075)!important;
+  box-shadow:var(--shadow-soft)!important;
+}
+.drug-card:hover{
+  transform:translateY(-9px) scale(1.008)!important;
+  box-shadow:var(--shadow-premium)!important;
+}
+.drug-card::after{background:linear-gradient(90deg,transparent,#c91522,#f35b65,transparent)!important}
+
+.calc-btn{
+  background:linear-gradient(135deg,#d31d2a,#a90f19)!important;
+  box-shadow:0 10px 25px rgba(201,21,34,.20);
+}
+.calc-btn:hover{box-shadow:0 16px 32px rgba(201,21,34,.28)!important}
+
+.modal-card{
+  border:1px solid rgba(18,24,32,.08)!important;
+  box-shadow:0 35px 100px rgba(0,0,0,.34)!important;
+}
+
+.about-section{
+  position:relative;
+  overflow:hidden;
+  margin-top:78px;
+  padding:92px 24px 100px;
+  background:
+    radial-gradient(circle at 88% 16%, rgba(201,21,34,.22), transparent 24rem),
+    linear-gradient(135deg,#171b21,#252b33 60%,#1c2026);
+  color:#fff;
+  isolation:isolate;
+}
+.about-inner{max-width:1100px;margin:auto;position:relative;z-index:2}
+.about-copy{max-width:900px}
+.about-kicker{
+  display:inline-flex;align-items:center;gap:8px;
+  color:#ff6a73;font-size:10px;font-weight:850;letter-spacing:.20em;
+  margin-bottom:15px;
+}
+.about-section h2{
+  max-width:820px;margin:0 0 18px;
+  font-size:clamp(34px,5.2vw,64px);
+  line-height:1.01;letter-spacing:-.045em;
+}
+.about-lead{
+  max-width:760px;margin:0 0 34px;
+  color:rgba(255,255,255,.66);font-size:15px;line-height:1.8;
+}
+.about-features{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:12px;max-width:900px;margin-bottom:32px;
+}
+.about-feature{
+  display:flex;align-items:flex-start;gap:11px;
+  padding:15px;border:1px solid rgba(255,255,255,.09);
+  border-radius:16px;background:rgba(255,255,255,.045);
+  transition:transform .35s var(--ease),background .35s ease,border-color .35s ease;
+}
+.about-feature:hover{transform:translateY(-4px);background:rgba(255,255,255,.07);border-color:rgba(255,105,112,.25)}
+.about-feature>i{color:#ff6570;font-size:15px;margin-top:2px}
+.about-feature strong{display:block;font-size:12px}
+.about-feature small{display:block;margin-top:4px;color:rgba(255,255,255,.47);font-size:10px;line-height:1.5}
+
+.creator-card{
+  display:flex!important;align-items:center;gap:16px;
+  max-width:720px!important;padding:18px 20px!important;
+  border:1px solid rgba(255,255,255,.12)!important;
+  background:rgba(255,255,255,.055)!important;
+  border-radius:20px!important;
+  box-shadow:0 24px 70px rgba(0,0,0,.20)!important;
+}
+.creator-avatar{
+  width:62px!important;height:62px!important;flex:0 0 62px!important;
+  border-radius:17px!important;
+  background:linear-gradient(135deg,#f04a55,#9e0d16)!important;
+  box-shadow:0 12px 30px rgba(201,21,34,.30);
+  font-size:20px;
+}
+.creator-label{color:rgba(255,255,255,.42)!important}
+.creator-info h3{font-size:21px!important}
+.creator-info p{color:#ff6872!important}
+.creator-seal{
+  margin-left:auto;width:68px!important;height:68px!important;
+  border-color:rgba(255,255,255,.13)!important;
+}
+.creator-seal i{font-size:19px;margin-bottom:3px}
+.creator-seal small{font-size:6px;letter-spacing:.16em;color:rgba(255,255,255,.40)}
+
+.about-note{
+  max-width:900px;margin-top:18px;padding:14px 16px;
+  display:flex;gap:10px;align-items:flex-start;
+  color:rgba(255,255,255,.53);font-size:10px;line-height:1.65;
+  border-top:1px solid rgba(255,255,255,.08);
+}
+.about-note>i{color:#ff6872;margin-top:2px}
+.about-note strong{color:rgba(255,255,255,.78)}
+
+.about-orb{
+  position:absolute;border-radius:50%;pointer-events:none;z-index:1;
+  filter:blur(2px);opacity:.65;
+}
+.about-orb-one{width:420px;height:420px;right:-180px;top:-150px;background:radial-gradient(circle,rgba(240,68,80,.20),transparent 68%);animation:floatOrb 10s ease-in-out infinite}
+.about-orb-two{width:260px;height:260px;left:-140px;bottom:-120px;background:radial-gradient(circle,rgba(255,255,255,.06),transparent 68%);animation:floatOrb 13s ease-in-out infinite reverse}
+
+footer{
+  background:#14181d!important;
+  border-top:1px solid rgba(255,255,255,.08)!important;
+  color:rgba(255,255,255,.43)!important;
+}
+footer strong{color:#fff!important}
+
+@media(max-width:1000px){
+  .tagline{display:none!important}
+  .header-nav{margin-left:auto}
+}
+@media(max-width:900px){
+  .site-header{padding:12px 15px!important}
+  .brand{min-width:0!important;max-width:calc(100% - 120px);}
+  .pharmacy-logo{width:46px!important;height:46px!important;min-width:46px!important;border-radius:13px;}
+  .pharmacy-logo i{font-size:23px;}
+  .brand-copy{min-width:0;overflow:hidden;}
+  .brand-copy strong{font-size:clamp(12px,3.2vw,18px)!important;letter-spacing:.015em!important;white-space:nowrap;}
+  .brand-copy small{font-size:clamp(6px,1.55vw,9px)!important;letter-spacing:.14em!important;white-space:nowrap;}
+  .header-nav{
+    position:absolute!important;left:12px;right:12px;top:calc(100% + 10px);
+    padding:8px!important;display:flex!important;flex-direction:column!important;
+    align-items:stretch!important;gap:3px!important;
+    background:rgba(23,27,33,.97)!important;
+    border:1px solid rgba(255,255,255,.09)!important;
+    border-radius:16px!important;
+    box-shadow:0 24px 55px rgba(0,0,0,.30)!important;
+    opacity:0;visibility:hidden;transform:translateY(-9px) scale(.985);
+    transform-origin:top center;
+    transition:opacity .28s ease,visibility .28s ease,transform .35s var(--ease);
+  }
+  .site-header.menu-open .header-nav{opacity:1;visibility:visible;transform:none}
+  .header-nav .nav-link{
+    justify-content:flex-start!important;padding:13px 14px!important;
+    border-radius:11px!important;
+  }
+  .header-nav .nav-link::after{display:none}
+  .nav-about{margin:3px 0 0!important;border-left:0!important;border-top:1px solid rgba(255,255,255,.08)!important;padding-top:15px!important}
+  .about-features{grid-template-columns:1fr}
+}
+@media(max-width:560px){
+  .brand{gap:8px!important;max-width:calc(100% - 94px);}
+  .pharmacy-logo{width:40px!important;height:40px!important;min-width:40px!important;border-radius:11px;}
+  .pharmacy-logo i{font-size:20px;}
+  .brand-copy strong{font-size:11px!important;letter-spacing:.01em!important}
+  .brand-copy small{font-size:5.8px!important;letter-spacing:.11em!important;margin-top:6px!important}
+  .about-section{padding:72px 17px 82px}
+  .about-section h2{font-size:39px}
+  .creator-card{align-items:flex-start!important;padding:16px!important}
+  .creator-seal{display:none}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
+
+
+.drug-card::before,.creator-card::before,.filter-card::before,.about-feature::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(220px circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.11),transparent 66%);
+  opacity:0;transition:opacity .35s ease;
+}
+.drug-card:hover::before,.creator-card:hover::before,.filter-card:hover::before,.about-feature:hover::before{opacity:1}
+
+
+/* =========================================================
+   ADDED ONLY — Glass header + pharmacy logo + Dark/Light mode
+   ========================================================= */
+:root{
+  --theme-bg-light:#f6f7f9;
+  --theme-surface-light:rgba(255,255,255,.91);
+  --theme-text-light:#171b21;
+  --theme-muted-light:#667085;
+  --theme-line-light:rgba(18,24,32,.09);
+  --theme-bg-dark:#0f1318;
+  --theme-surface-dark:rgba(23,27,33,.88);
+  --theme-surface-dark-2:rgba(30,36,44,.88);
+  --theme-text-dark:#f2f4f7;
+  --theme-muted-dark:#aab2bd;
+  --theme-line-dark:rgba(255,255,255,.10);
+}
+
+/* Header glass effect — intentionally limited to the header. */
+.site-header{
+  background:rgba(23,27,33,.58)!important;
+  border:1px solid rgba(255,255,255,.12)!important;
+  border-top-color:rgba(255,255,255,.16)!important;
+  box-shadow:0 18px 50px rgba(0,0,0,.20), inset 0 1px 0 rgba(255,255,255,.12)!important;
+  backdrop-filter:blur(22px) saturate(155%)!important;
+  -webkit-backdrop-filter:blur(22px) saturate(155%)!important;
+}
+.site-header.scrolled{background:rgba(23,27,33,.48)!important;}
+
+.pharmacy-logo{
+  width:60px!important;height:60px!important;min-width:60px;
+  border-radius:16px;
+  display:grid!important;place-items:center;
+  background:linear-gradient(145deg,#e3232d,#b20d17)!important;
+  color:#fff;
+  box-shadow:0 12px 28px rgba(201,21,34,.30), inset 0 1px 0 rgba(255,255,255,.28);
+  filter:none!important;
+  transition:transform .45s var(--ease),box-shadow .45s ease;
+}
+.pharmacy-logo i{font-size:31px;line-height:1;color:#fff;filter:drop-shadow(0 2px 3px rgba(0,0,0,.15));}
+.brand:hover .pharmacy-logo{transform:translateY(-1px) scale(1.04)!important;box-shadow:0 15px 32px rgba(201,21,34,.38),inset 0 1px 0 rgba(255,255,255,.32);}
+.brand-copy strong{font-size:29px!important;letter-spacing:.02em!important;line-height:1!important;}
+.brand-copy small{margin-top:8px!important;font-size:12px!important;letter-spacing:.28em!important;color:#ff5c63!important;font-weight:800!important;}
+
+.theme-toggle{
+  position:relative!important;
+  width:86px!important;height:42px!important;flex:0 0 86px;
+  display:flex!important;align-items:center;justify-content:space-between;
+  padding:4px 7px!important;border-radius:999px!important;
+  cursor:pointer!important;color:#fff!important;
+  background:rgba(255,255,255,.09)!important;
+  border:1px solid rgba(255,255,255,.16)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 8px 22px rgba(0,0,0,.12)!important;
+  backdrop-filter:blur(12px)!important;-webkit-backdrop-filter:blur(12px)!important;
+  transform:none!important;
+}
+.theme-toggle:hover{background:rgba(255,255,255,.13)!important;transform:none!important;}
+.theme-toggle .theme-icon{width:26px;height:26px;display:grid;place-items:center;opacity:.72;z-index:1;}
+.theme-toggle .theme-icon i{font-size:13px;}
+.theme-toggle .theme-thumb{
+  position:absolute;left:4px;top:4px;width:32px;height:32px;border-radius:50%;
+  display:grid;place-items:center;background:#fff;color:#d32f2f;
+  box-shadow:0 4px 12px rgba(0,0,0,.20);transition:transform .35s var(--ease),background .35s ease,color .35s ease;
+}
+.theme-toggle .theme-thumb i{font-size:14px;}
+body.light-mode .theme-toggle .theme-thumb{transform:translateX(46px);background:#fff;color:#d32f2f;}
+body.dark-mode .theme-toggle .theme-thumb{transform:translateX(0);background:#252b33;color:#ffd166;}
+
+/* Light mode keeps the original visual system. */
+body.light-mode{background:var(--theme-bg-light);color:var(--theme-text-light);}
+body.light-mode .filter-card,
+body.light-mode .table-responsive,
+body.light-mode .calc-box,
+body.light-mode .drug-card{background:var(--theme-surface-light)!important;}
+
+/* Dark mode */
+body.dark-mode{
+  --light-bg:#0f1318;
+  --card-bg:#171c22;
+  --text-main:#eef2f6;
+  --text-muted:#a7b0bb;
+  --border-color:rgba(255,255,255,.10);
+  --accent-dark:#e5e7eb;
+  --header-gray:#11151a;
+  background:
+    radial-gradient(circle at 10% 0%,rgba(201,21,34,.10),transparent 28rem),
+    radial-gradient(circle at 92% 22%,rgba(255,255,255,.035),transparent 30rem),
+    #0f1318!important;
+  color:#eef2f6!important;
+}
+body.dark-mode .site-header{
+  background:rgba(10,14,19,.52)!important;
+  border-color:rgba(255,255,255,.10)!important;
+  box-shadow:0 18px 50px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.08)!important;
+}
+body.dark-mode .header-nav .nav-link{color:rgba(255,255,255,.72)!important;}
+body.dark-mode .tagline{color:rgba(255,255,255,.48)!important;}
+body.dark-mode .tabs{background:rgba(22,27,34,.72)!important;border-color:rgba(255,255,255,.08);}
+body.dark-mode .filter-card,
+body.dark-mode .table-responsive,
+body.dark-mode .calc-box,
+body.dark-mode .drug-card{
+  background:var(--theme-surface-dark)!important;
+  border-color:var(--theme-line-dark)!important;
+  box-shadow:0 18px 50px rgba(0,0,0,.24)!important;
+}
+body.dark-mode .filter-card:hover{box-shadow:0 28px 70px rgba(0,0,0,.32)!important;}
+body.dark-mode .filter-group label,
+body.dark-mode .calc-group label,
+body.dark-mode .calc-box h3{color:#e5e7eb!important;}
+body.dark-mode select,
+body.dark-mode input{background:#0f141a!important;color:#f2f4f7!important;border-color:rgba(255,255,255,.12)!important;}
+body.dark-mode .drug-card-header{background:rgba(17,22,29,.88)!important;border-bottom-color:rgba(255,255,255,.08)!important;}
+body.dark-mode .drug-active{color:#a7b0bb!important;}
+body.dark-mode .company-name{color:#c2c9d1!important;}
+body.dark-mode .drug-meta{border-top-color:rgba(255,255,255,.08)!important;}
+body.dark-mode .badge-form{background:rgba(201,21,34,.18);color:#ffb4b8;}
+body.dark-mode tbody tr:hover{background:rgba(255,255,255,.035)!important;}
+body.dark-mode th{background:#252b33!important;}
+body.dark-mode td{border-bottom-color:rgba(255,255,255,.08)!important;color:#e5e7eb;}
+body.dark-mode .sens-high{background:#123322;color:#86efac;}
+body.dark-mode .sens-med{background:#3b3210;color:#fde68a;}
+body.dark-mode .sens-low{background:#3a171b;color:#fca5a5;}
+body.dark-mode .modal-card{background:#161b22!important;border-color:rgba(255,255,255,.10)!important;}
+body.dark-mode .modal-body{color:#e5e7eb;}
+body.dark-mode .info-card{background:#11161d;border-color:rgba(255,255,255,.09);}
+body.dark-mode .info-card-content{color:#d0d5dd;}
+body.dark-mode .info-card-title{color:#e5e7eb;}
+body.dark-mode .modal-calc-box{background:#1d2630;border-color:rgba(255,255,255,.10);}
+body.dark-mode .contra-box{background:#2a1719;border-color:#7f1d1d;}
+body.dark-mode .contra-list{color:#fecaca;}
+body.dark-mode .calc-result{background:#35181c;color:#fecaca;}
+body.dark-mode .instruction-banner{background:rgba(30,24,25,.82)!important;color:#ffb4b8!important;border-color:rgba(201,21,34,.25)!important;}
+body.dark-mode footer{background:#080b0f!important;}
+
+@media(max-width:900px){
+  .pharmacy-logo{width:48px!important;height:48px!important;min-width:48px;}
+  .pharmacy-logo i{font-size:25px;}
+  .brand-copy strong{font-size:18px!important;}
+  .brand-copy small{font-size:8px!important;letter-spacing:.20em!important;}
+  .theme-toggle{width:70px!important;height:38px!important;flex-basis:70px;}
+  .theme-toggle .theme-thumb{width:28px;height:28px;}
+  body.light-mode .theme-toggle .theme-thumb{transform:translateX(36px);}
+  .theme-toggle .theme-icon{width:23px;height:23px;}
+  body.dark-mode .header-nav{background:rgba(10,14,19,.97)!important;}
+  body.light-mode .header-nav{background:rgba(255,255,255,.97)!important;border-color:rgba(23,27,33,.10)!important;}
+  body.light-mode .header-nav .nav-link{color:#344054!important;}
+}
+@media(max-width:560px){
+  .pharmacy-logo{width:43px!important;height:43px!important;min-width:43px;border-radius:13px;}
+  .pharmacy-logo i{font-size:22px;}
+  .brand-copy strong{font-size:14px!important;}
+  .brand-copy small{font-size:6.5px!important;letter-spacing:.16em!important;}
+  .theme-toggle{width:64px!important;height:36px!important;flex-basis:64px;}
+  .theme-toggle .theme-thumb{width:28px;height:28px;}
+  body.light-mode .theme-toggle .theme-thumb{transform:translateX(28px);}
+}
+
+</style>
+</head>
+<body>
+
+<header id="siteHeader" class="site-header">
+  <div class="header-inner">
+    <a href="#tab-market" class="brand" aria-label="Antibiogram Desk home" onclick="goToSection('market'); return false;">
+      <span class="brand-mark pharmacy-logo" aria-hidden="true">
+        <i class="fa-solid fa-capsules"></i>
+      </span>
+      <span class="brand-copy">
+        <strong>ANTIBIOGRAM DESK</strong>
+        <small>CLINICAL PHARMACY GUIDE</small>
+      </span>
+    </a>
+
+    <nav class="header-nav" id="headerNav" aria-label="Primary navigation">
+      <a class="nav-link active" data-section="market" href="#tab-market" onclick="goToSection('market'); return false;">
+        <i class="fa-solid fa-pills"></i><span>Market</span>
+      </a>
+      <a class="nav-link" data-section="antibiogram" href="#tab-antibiogram" onclick="goToSection('antibiogram'); return false;">
+        <i class="fa-solid fa-chart-simple"></i><span>Antibiogram</span>
+      </a>
+      <a class="nav-link" data-section="calculator" href="#tab-calculator" onclick="goToSection('calculator'); return false;">
+        <i class="fa-solid fa-calculator"></i><span>Calculator</span>
+      </a>
+      <a class="nav-link nav-about" data-section="about" href="#about" onclick="goToSection('about'); return false;">
+        <i class="fa-solid fa-circle-info"></i><span>About</span>
+      </a>
+    </nav>
+
+    <p class="tagline">Antibiotic reference, market lookup &amp; renal dosing tools — designed for a cleaner clinical workflow.</p>
+
+    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to dark mode" aria-pressed="false" onclick="toggleTheme()">
+      <span class="theme-icon"><i class="fa-solid fa-moon"></i></span>
+      <span class="theme-thumb"><i class="fa-solid fa-sun"></i></span>
+      <span class="theme-icon"><i class="fa-solid fa-sun"></i></span>
+    </button>
+
+    <button class="mobile-menu-btn" id="mobileMenuBtn" type="button"
+            aria-label="Open menu" aria-expanded="false" onclick="toggleMobileMenu()">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+  </div>
+</header>
+
+<div class="container">
+    <div class="instruction-banner reveal-on-scroll">
+        <i class="fa-solid fa-hand-pointer"></i>
+        <span><strong>Clinical Desk:</strong> Click any antibiotic card to access full clinical contraindications (✖), infection severity adjustments, and dosing guidelines.</span>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('market', this)"><i class="fa-solid fa-pills"></i> Egyptian Market Database</button>
+        <button class="tab-btn" onclick="switchTab('antibiogram', this)"><i class="fa-solid fa-table-cells"></i> Sensitivity Map (Antibiogram)</button>
+        <button class="tab-btn" onclick="switchTab('calculator', this)"><i class="fa-solid fa-calculator"></i> Renal Clearance Calculator</button>
+    </div>
+
+    <!-- TAB 1: Egyptian Market -->
+    <div id="tab-market" class="tab-content active">
+        <div class="filter-card reveal-on-scroll">
+            <div class="filter-grid">
+                <div class="filter-group">
+                    <label for="searchInput"><i class="fa-solid fa-magnifying-glass"></i> Search Brand or Active Ingredient:</label>
+                    <input type="text" id="searchInput" placeholder="e.g. Augmentin, Penbritin, Suprax, Claforan, Tobrex..." oninput="renderDrugs()">
+                </div>
+                <div class="filter-group">
+                    <label for="classSelect"><i class="fa-solid fa-filter"></i> Filter by Antibiotic Class:</label>
+                    <select id="classSelect" onchange="renderDrugs()">
+                        <option value="all">-- All Antibiotic Classes --</option>
+                        <option value="Penicillins">Penicillins</option>
+                        <option value="Cephalosporins">Cephalosporins</option>
+                        <option value="Carbapenems">Carbapenems</option>
+                        <option value="Fluoroquinolones">Fluoroquinolones</option>
+                        <option value="Macrolides">Macrolides</option>
+                        <option value="Aminoglycosides">Aminoglycosides</option>
+                        <option value="Glycopeptides">Glycopeptides</option>
+                        <option value="Oxazolidinones">Oxazolidinones</option>
+                        <option value="Polymyxins">Polymyxins</option>
+                        <option value="Tetracyclines">Tetracyclines</option>
+                        <option value="Lincosamides">Lincosamides</option>
+                        <option value="Sulfonamides">Sulfonamides</option>
+                        <option value="Streptogramins">Streptogramins</option>
+                        <option value="Phenicols">Phenicols</option>
+                        <option value="Nitrofurans">Nitrofurans</option>
+                        <option value="Nitroimidazoles">Nitroimidazoles</option>
+                        <option value="Rifamycins">Rifamycins</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div id="drugsGrid" class="drugs-grid"></div>
+    </div>
+
+    <!-- TAB 2: Antibiogram -->
+    <div id="tab-antibiogram" class="tab-content">
+        <div class="table-responsive reveal-on-scroll">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Antibiotic Agent</th>
+                        <th>Staph. aureus (MSSA)</th>
+                        <th>Strept. pneumoniae</th>
+                        <th>E. coli</th>
+                        <th>Pseudomonas aeruginosa</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Amoxicillin / Clavulanate</strong></td>
+                        <td class="sens-high"><i class="fa-solid fa-circle-check"></i> High (88%)</td>
+                        <td class="sens-high"><i class="fa-solid fa-circle-check"></i> High (92%)</td>
+                        <td class="sens-med"><i class="fa-solid fa-circle-exclamation"></i> Moderate (62%)</td>
+                        <td class="sens-low"><i class="fa-solid fa-circle-xmark"></i> Resistant (0%)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Ceftriaxone</strong></td>
+                        <td class="sens-high"><i class="fa-solid fa-circle-check"></i> High (80%)</td>
+                        <td class="sens-high"><i class="fa-solid fa-circle-check"></i> High (95%)</td>
+                        <td class="sens-high"><i class="fa-solid fa-circle-check"></i> High (78%)</td>
+                        <td class="sens-low"><i class="fa-solid fa-circle-xmark"></i> Resistant (0%)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Cefepime</strong></td>
+                        <td class="sens-high"><i class="fa-solid fa-circle-check"></i> High (85%)</td>
+                        <td class="sens-high"><i class="fa-solid fa-circle-check"></i> High (92%)</td>
+                        <td class="sens-high"><i class="fa-solid fa-circle-check"></i> High (84%)</td>
+                        <td class="sens-high"><i class="fa-solid fa-circle-check"></i> High (86%)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Meropenem</strong></td>
+                        <td class="sens-high"><i class="fa-solid fa-circle-check"></i> High (95%)</td>
+                        <td class="sens-high"><i class="fa-solid fa-circle-check"></i> High (98%)</td>
+                        <td class="sens-high"><i class="fa-solid fa-circle-check"></i> High (92%)</td>
+                        <td class="sens-high"><i class="fa-solid fa-circle-check"></i> High (88%)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Vancomycin</strong></td>
+                        <td class="sens-high"><i class="fa-solid fa-circle-check"></i> High (100%)</td>
+                        <td class="sens-high"><i class="fa-solid fa-circle-check"></i> High (100%)</td>
+                        <td class="sens-low">N/A (Gram -ve)</td>
+                        <td class="sens-low">N/A (Gram -ve)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- TAB 3: Renal Calculator -->
+    <div id="tab-calculator" class="tab-content">
+        <div class="calc-box reveal-on-scroll">
+            <h3><i class="fa-solid fa-kidney"></i> Creatinine Clearance (CrCl - Cockcroft-Gault)</h3>
+            <div class="calc-group">
+                <label for="gender"><i class="fa-solid fa-venus-mars"></i> Patient Gender:</label>
+                <select id="gender"><option value="1">Male</option><option value="0.85">Female</option></select>
+            </div>
+            <div class="calc-group">
+                <label for="age"><i class="fa-solid fa-cake-candles"></i> Age (Years):</label>
+                <input type="number" id="age" placeholder="e.g. 45">
+            </div>
+            <div class="calc-group">
+                <label for="weight"><i class="fa-solid fa-weight-scale"></i> Weight (kg):</label>
+                <input type="number" id="weight" placeholder="e.g. 70">
+            </div>
+            <div class="calc-group">
+                <label for="scr"><i class="fa-solid fa-vial"></i> Serum Creatinine (mg/dL):</label>
+                <input type="number" step="0.1" id="scr" placeholder="e.g. 1.2">
+            </div>
+            <button class="calc-btn" onclick="calculateCrCl()"><i class="fa-solid fa-calculator"></i> Calculate Clearance</button>
+            <div id="calcResult" class="calc-result"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Antibiotic Clinical Detail Modal -->
+<div id="detailModal" class="modal-overlay">
+    <div class="modal-card">
+        <div class="modal-header">
+            <div>
+                <h2 id="modalDrugName">Augmentin 1g</h2>
+                <p id="modalActiveName"><i class="fa-solid fa-flask"></i> Amoxicillin / Clavulanic Acid</p>
+            </div>
+            <button class="close-btn" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        
+        <div class="modal-body">
+            <!-- Contraindications Alert Box -->
+            <div class="contra-box">
+                <div class="contra-title"><i class="fa-solid fa-circle-xmark" style="color:#dc2626; font-size:1.2rem;"></i> Absolute Contraindications (✖) & Key Warnings</div>
+                <ul class="contra-list" id="modalContraList"></ul>
+            </div>
+
+            <!-- Infection-Adjusted Weight Calculator -->
+            <div class="modal-calc-box">
+                <div class="info-card-title"><i class="fa-solid fa-calculator"></i> Pediatric Infection-Adjusted Dosing Calculator</div>
+                <div class="calc-grid">
+                    <div>
+                        <label style="font-size:0.8rem; font-weight:600;"><i class="fa-solid fa-weight-scale"></i> Child Weight (kg):</label>
+                        <input type="number" id="modalWeightInput" placeholder="e.g. 15" oninput="calcModalPedDose()">
+                    </div>
+                    <div>
+                        <label style="font-size:0.8rem; font-weight:600;"><i class="fa-solid fa-viruses"></i> Infection Site / Severity:</label>
+                        <select id="modalInfectionSite" onchange="calcModalPedDose()">
+                            <option value="standard">Mild / Normal Infection (Standard Dose)</option>
+                            <option value="severe">Severe Infection / Otitis Media / Pneumonia / Meningitis (High Dose)</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="modalCalcOutput" style="margin-top:12px; font-size:0.9rem; font-weight:bold; color:var(--primary-dark-red);">
+                    Enter weight to calculate dose.
+                </div>
+            </div>
+
+            <!-- Fast-Scan Clinical Cards Grid -->
+            <div class="clinic-grid">
+                <div class="info-card">
+                    <div class="info-card-title"><i class="fa-solid fa-child"></i> Pediatric Baseline Dosing</div>
+                    <div class="info-card-content" id="modalPedDose"></div>
+                </div>
+                <div class="info-card">
+                    <div class="info-card-title"><i class="fa-solid fa-user"></i> Adult Dosing</div>
+                    <div class="info-card-content" id="modalAdultDose"></div>
+                </div>
+                <div class="info-card">
+                    <div class="info-card-title"><i class="fa-solid fa-kidney"></i> Renal Impairment (CrCl Adjustment)</div>
+                    <div class="info-card-content" id="modalRenalDose"></div>
+                </div>
+                <div class="info-card">
+                    <div class="info-card-title"><i class="fa-solid fa-disease"></i> Hepatic Failure</div>
+                    <div class="info-card-content" id="modalHepaticDose"></div>
+                </div>
+                <div class="info-card">
+                    <div class="info-card-title"><i class="fa-solid fa-user-clock"></i> Elderly Patients</div>
+                    <div class="info-card-content" id="modalElderlyDose"></div>
+                </div>
+                <div class="info-card">
+                    <div class="info-card-title"><i class="fa-solid fa-person-pregnant"></i> Pregnancy Safety</div>
+                    <div class="info-card-content" id="modalPregnancy"></div>
+                </div>
+                <div class="info-card">
+                    <div class="info-card-title"><i class="fa-solid fa-baby"></i> Lactation / Breastfeeding</div>
+                    <div class="info-card-content" id="modalLactation"></div>
+                </div>
+                <div class="info-card">
+                    <div class="info-card-title"><i class="fa-solid fa-sliders"></i> Dosing Modification Factors</div>
+                    <div class="info-card-content" id="modalModifiers"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<section id="about" class="about-section reveal-on-scroll" aria-labelledby="aboutTitle">
+  <div class="about-orb about-orb-one"></div>
+  <div class="about-orb about-orb-two"></div>
+  <div class="about-inner">
+    <div class="about-copy">
+      <span class="about-kicker"><i class="fa-solid fa-prescription-bottle-medical"></i> ABOUT THE DESK</span>
+      <h2 id="aboutTitle">A focused clinical workspace for antibiotic decisions.</h2>
+      <p class="about-lead">
+        Antibiogram Desk brings together an Egyptian-market antibiotic reference, a compact sensitivity map,
+        and a renal clearance calculator in one responsive workspace. The goal is simple: make commonly
+        needed information easier to find, scan, and use during study or clinical review.
+      </p>
+      <div class="about-features">
+        <div class="about-feature"><i class="fa-solid fa-magnifying-glass"></i><span><strong>Market</strong><small>Search and filter antibiotic entries.</small></span></div>
+        <div class="about-feature"><i class="fa-solid fa-chart-column"></i><span><strong>Antibiogram</strong><small>Scan the included sensitivity map.</small></span></div>
+        <div class="about-feature"><i class="fa-solid fa-kidney"></i><span><strong>Calculator</strong><small>Estimate CrCl with Cockcroft–Gault.</small></span></div>
+      </div>
+    </div>
+
+    <div class="creator-card">
+      <div class="creator-avatar" aria-hidden="true">
+        <i class="fa-solid fa-user-doctor"></i>
+      </div>
+      <div class="creator-info">
+        <span class="creator-label">Created &amp; developed by</span>
+        <h3>Soha Salah</h3>
+        <p><i class="fa-solid fa-capsules"></i> Pharmacist</p>
+      </div>
+      <div class="creator-seal" aria-hidden="true">
+        <i class="fa-solid fa-mortar-pestle"></i>
+        <small>PHARMACY</small>
+      </div>
+    </div>
+
+    <div class="about-note">
+      <i class="fa-solid fa-shield-heart"></i>
+      <span><strong>Clinical note:</strong> This interface is a reference and calculation aid, not a substitute for patient-specific assessment, local protocols, or professional prescribing judgment.</span>
+    </div>
+  </div>
+</section>
+
+<footer>
+    <p>Antibiogram Desk &copy; 2026 | Created &amp; Developed by <strong>Soha Salah · Pharmacist</strong></p>
+</footer>
+
+<script>
+    // Complete Antibiotic Database extracted from the Egyptian Market PDF
+    const egyptDatabase = [
+        // PENICILLINS
+        { id: "amox", class: "Penicillins", active: "Amoxicillin", tradeName: "Amoxil / Amoxicare (250, 500mg, 1g)", form: "Caps / Susp / Vial", company: "GSK / Amoun",
+          contra: ["✖ Known anaphylaxis to Penicillins."], pedStandard: { min: 25, max: 50, text: "25-50 mg/kg/day q8h" }, pedSevere: { min: 80, max: 90, text: "80-90 mg/kg/day q8h" },
+          pedDose: "25-50 mg/kg/day q8h (High dose: 80-90 mg/kg/day).", adultDose: "250mg - 1g PO/IV q8h.", renalDose: "CrCl 10-30: q12h. CrCl <10: q24h.", hepaticDose: "No adjustment.", elderlyDose: "Standard.", pregnancy: "Category B. Safe.", lactation: "Compatible.", modifiers: "Take with or without food." },
+        
+        { id: "aug", class: "Penicillins", active: "Amoxicillin + Clavulanic Acid", tradeName: "Augmentin / Curam / Amoclaw (1g, 625mg, 375mg)", form: "Tabs / Susp / Vial", company: "GSK / Sandoz / Amoun",
+          contra: ["✖ History of Penicillin anaphylaxis.", "✖ History of Amox/Clav cholestatic jaundice."], pedStandard: { min: 25, max: 45, text: "25-45 mg/kg/day q12h" }, pedSevere: { min: 80, max: 90, text: "80-90 mg/kg/day q12h" },
+          pedDose: "25-45 mg/kg/day q12h (Severe: 80-90 mg/kg/day).", adultDose: "625mg - 1g PO q12h or 1.2g IV q8h.", renalDose: "CrCl 10-30: 500mg q12h. CrCl <10: 500mg q24h.", hepaticDose: "Monitor LFTs.", elderlyDose: "Adjust for GFR.", pregnancy: "Category B. Safe.", lactation: "Compatible.", modifiers: "Take at start of meal to reduce GI upset." },
+
+        { id: "ampi", class: "Penicillins", active: "Ampicillin", tradeName: "Penbritin / Ampicare (250, 500mg, 1g)", form: "Caps / Susp / Vial", company: "GSK / Amoun",
+          contra: ["✖ Penicillin allergy."], pedStandard: { min: 50, max: 100, text: "50-100 mg/kg/day q6h" }, pedSevere: { min: 100, max: 200, text: "100-200 mg/kg/day q6h" },
+          pedDose: "50-100 mg/kg/day q6h.", adultDose: "250mg - 1g PO/IV q6h.", renalDose: "CrCl <10: q12h.", hepaticDose: "No adjustment.", elderlyDose: "Standard.", pregnancy: "Category B.", lactation: "Compatible.", modifiers: "Take on empty stomach (1h before or 2h after food)." },
+
+        { id: "cloxa", class: "Penicillins", active: "Cloxacillin", tradeName: "Orbenin (500mg)", form: "Caps / Susp / Vial", company: "GSK",
+          contra: ["✖ Penicillin allergy."], pedStandard: { min: 50, max: 100, text: "50-100 mg/kg/day q6h" }, pedSevere: { min: 100, max: 100, text: "100 mg/kg/day q6h" },
+          pedDose: "50-100 mg/kg/day divided q6h.", adultDose: "250mg - 500mg PO/IV q6h.", renalDose: "No adjustment needed.", hepaticDose: "No adjustment.", elderlyDose: "Standard.", pregnancy: "Category B.", lactation: "Compatible.", modifiers: "Anti-staphylococcal penicillin." },
+
+        { id: "penG", class: "Penicillins", active: "Benzylpenicillin (Penicillin G)", tradeName: "Penicillin G Sodium (1M, 5M IU)", form: "Vial", company: "EIPICO",
+          contra: ["✖ Severe Penicillin allergy."], pedStandard: { min: 100000, max: 250000, text: "100,000-250,000 IU/kg/day q4h-q6h" }, pedSevere: { min: 300000, max: 400000, text: "300,000-400,000 IU/kg/day q4h" },
+          pedDose: "100,000-250,000 IU/kg/day q4h-q6h.", adultDose: "2 - 24 Million Units IV daily in divided doses.", renalDose: "CrCl < 10: Reduce dose by 50%.", hepaticDose: "No adjustment.", elderlyDose: "Monitor renal function.", pregnancy: "Category B.", lactation: "Compatible.", modifiers: "IV/IM administration only." },
+
+        { id: "penV", class: "Penicillins", active: "Phenoxymethylpenicillin (Penicillin V)", tradeName: "Ospen (250, 500mg)", form: "Tabs / Susp", company: "Sandoz",
+          contra: ["✖ Penicillin allergy."], pedStandard: { min: 25, max: 50, text: "25-50 mg/kg/day q6h" }, pedSevere: { min: 50, max: 50, text: "50 mg/kg/day q6h" },
+          pedDose: "25-50 mg/kg/day q6h.", adultDose: "250mg - 500mg PO q6h.", renalDose: "CrCl < 10: q8h.", hepaticDose: "No adjustment.", elderlyDose: "Standard.", pregnancy: "Category B.", lactation: "Compatible.", modifiers: "Oral form of Penicillin G." },
+
+        // CEPHALOSPORINS
+        { id: "rocephin", class: "Cephalosporins", active: "Ceftriaxone", tradeName: "Rocephin / Ceftriaxone (500mg, 1g)", form: "Vial", company: "Roche / EIPICO / Amoun / Sandoz",
+          contra: ["✖ Neonates (≤28 days) receiving IV calcium (Fatal precipitates).", "✖ Cephalosporin allergy."], pedStandard: { min: 50, max: 75, text: "50-75 mg/kg once daily" }, pedSevere: { min: 80, max: 100, text: "80-100 mg/kg/day q12h (Meningitis)" },
+          pedDose: "50-75 mg/kg once daily. Meningitis: 100 mg/kg/day.", adultDose: "1 - 2g IV once daily. Meningitis: 2g IV q12h.", renalDose: "No adjustment up to 2g/day.", hepaticDose: "No adjustment.", elderlyDose: "Standard.", pregnancy: "Category B.", lactation: "Compatible.", modifiers: "Once daily dosing." },
+
+        { id: "claforan", class: "Cephalosporins", active: "Cefotaxime", tradeName: "Claforan / Cefotaxime (1g)", form: "Vial", company: "Sanofi / EIPICO / Amoun",
+          contra: ["✖ Cephalosporin allergy."], pedStandard: { min: 100, max: 150, text: "100-150 mg/kg/day q6h-q8h" }, pedSevere: { min: 200, max: 200, text: "200 mg/kg/day q6h (Meningitis)" },
+          pedDose: "100-150 mg/kg/day. Meningitis: 200 mg/kg/day.", adultDose: "1 - 2g IV q6h-q8h.", renalDose: "CrCl < 20: Reduce dose by 50%.", hepaticDose: "No adjustment.", elderlyDose: "Adjust for CrCl.", pregnancy: "Category B. Preferred in neonates over Ceftriaxone.", lactation: "Compatible.", modifiers: "Safe in neonates with hyperbilirubinemia." },
+
+        { id: "maxipime", class: "Cephalosporins", active: "Cefepime (4th Gen)", tradeName: "Maxipime / Cefepime (1g)", form: "Vial", company: "BMS / EIPICO",
+          contra: ["✖ Cephalosporin allergy."], pedStandard: { min: 100, max: 100, text: "100 mg/kg/day divided q12h" }, pedSevere: { min: 150, max: 150, text: "150 mg/kg/day divided q8h" },
+          pedDose: "50 mg/kg q12h (Severe: 50 mg/kg q8h).", adultDose: "1 - 2g IV q8h-q12h.", renalDose: "CrCl 30-50: q12h. CrCl 10-30: 50% q12h.", hepaticDose: "No adjustment.", elderlyDose: "High risk of neurotoxicity if renal impairment unadjusted.", pregnancy: "Category B.", lactation: "Compatible.", modifiers: "Broad spectrum Gram +ve and Pseudomonas." },
+
+        { id: "suprax", class: "Cephalosporins", active: "Cefixime (3rd Gen Oral)", tradeName: "Suprax / Cefixime (100, 200mg)", form: "Caps / Susp", company: "Hikma / EIPICO / Amoun",
+          contra: ["✖ Cephalosporin allergy."], pedStandard: { min: 8, max: 8, text: "8 mg/kg/day once daily or q12h" }, pedSevere: { min: 12, max: 12, text: "12 mg/kg/day" },
+          pedDose: "8 mg/kg/day once daily.", adultDose: "200mg PO q12h or 400mg once daily.", renalDose: "CrCl 20-40: 75% dose. CrCl < 20: 50% dose.", hepaticDose: "No adjustment.", elderlyDose: "Adjust for CrCl.", pregnancy: "Category B.", lactation: "Compatible.", modifiers: "Oral 3rd generation cephalosporin." },
+
+        { id: "zinnat", class: "Cephalosporins", active: "Cefuroxime (2nd Gen)", tradeName: "Zinnat / Zinacef (250, 500mg, 750mg, 1.5g)", form: "Tabs / Susp / Vial", company: "GSK / EIPICO",
+          contra: ["✖ Cephalosporin allergy."], pedStandard: { min: 20, max: 30, text: "20-30 mg/kg/day q12h" }, pedSevere: { min: 30, max: 40, text: "30-40 mg/kg/day q12h" },
+          pedDose: "20-30 mg/kg/day q12h.", adultDose: "250-500mg PO q12h or 750mg-1.5g IV q8h.", renalDose: "CrCl 10-20: q12h. CrCl <10: q24h.", hepaticDose: "No adjustment.", elderlyDose: "Standard.", pregnancy: "Category B.", lactation: "Compatible.", modifiers: "Take oral tablets with food." },
+
+        { id: "kefzol", class: "Cephalosporins", active: "Cefazolin (1st Gen)", tradeName: "Kefzol / Cefazolin (500mg, 1g)", form: "Vial", company: "Lilly / EIPICO",
+          contra: ["✖ Cephalosporin allergy."], pedStandard: { min: 25, max: 50, text: "25-50 mg/kg/day q6h-q8h" }, pedSevere: { min: 100, max: 100, text: "100 mg/kg/day q6h" },
+          pedDose: "25-50 mg/kg/day q6h-q8h.", adultDose: "1 - 2g IV q8h. Surgical prophylaxis: 1-2g 30 min before incision.", renalDose: "CrCl 35-54: q8h. CrCl 11-34: 50% q12h.", hepaticDose: "No adjustment.", elderlyDose: "Adjust for CrCl.", pregnancy: "Category B.", lactation: "Compatible.", modifiers: "Drug of choice for surgical prophylaxis." },
+
+        { id: "keflex", class: "Cephalosporins", active: "Cefalexin (1st Gen Oral)", tradeName: "Keflex / Cefalexin (250, 500mg)", form: "Caps / Susp", company: "Lilly / EIPICO / Amoun",
+          contra: ["✖ Cephalosporin allergy."], pedStandard: { min: 25, max: 50, text: "25-50 mg/kg/day q6h" }, pedSevere: { min: 75, max: 100, text: "75-100 mg/kg/day q6h" },
+          pedDose: "25-50 mg/kg/day q6h.", adultDose: "250mg - 500mg PO q6h or 1g q12h.", renalDose: "CrCl 10-30: 250-500mg q8h-q12h.", hepaticDose: "No adjustment.", elderlyDose: "Standard.", pregnancy: "Category B.", lactation: "Compatible.", modifiers: "Common for skin & soft tissue infections." },
+
+        // MACROLIDES & SPIRAMYCIN
+        { id: "zithro", class: "Macrolides", active: "Azithromycin", tradeName: "Zithromax / Zathrocin / Azomycin (250, 500mg)", form: "Tabs / Susp / Vial", company: "Pfizer / MUP / Amoun",
+          contra: ["✖ History of cholestatic jaundice with Azithromycin.", "✖ QT prolongation."], pedStandard: { min: 10, max: 10, text: "10 mg/kg Day 1, then 5 mg/kg Days 2-5" }, pedSevere: { min: 10, max: 20, text: "10-20 mg/kg once daily" },
+          pedDose: "10 mg/kg Day 1, then 5 mg/kg Days 2-5.", adultDose: "500mg Day 1, then 250mg Days 2-5 (or 500mg daily for 3 days).", renalDose: "No adjustment needed.", hepaticDose: "Caution.", elderlyDose: "Check baseline ECG.", pregnancy: "Category B.", lactation: "Compatible.", modifiers: "Minimal CYP450 interactions." },
+
+        { id: "klacid", class: "Macrolides", active: "Clarithromycin", tradeName: "Klacid / Claritek (250, 500mg)", form: "Tabs / Susp / Vial", company: "Abbott / Hikma",
+          contra: ["✖ Concurrent Pimozide, Cisapride, Ergotamine.", "✖ QT prolongation."], pedStandard: { min: 15, max: 15, text: "7.5 mg/kg q12h" }, pedSevere: { min: 15, max: 20, text: "7.5-10 mg/kg q12h" },
+          pedDose: "15 mg/kg/day divided q12h.", adultDose: "250 - 500mg PO q12h.", renalDose: "CrCl < 30: Reduce dose by 50%.", hepaticDose: "Caution.", elderlyDose: "Check CrCl.", pregnancy: "Category C.", lactation: "Caution.", modifiers: "Potent CYP3A4 inhibitor." },
+
+        { id: "erythro", class: "Macrolides", active: "Erythromycin", tradeName: "Erythrocin / Erythromycin (250, 500mg, 2% Oint)", form: "Tabs / Susp / Vial / Ointment", company: "Abbott / EIPICO",
+          contra: ["✖ Co-administration with Terfenadine, Astemizole, Cisapride."], pedStandard: { min: 30, max: 50, text: "30-50 mg/kg/day q6h" }, pedSevere: { min: 50, max: 50, text: "50 mg/kg/day q6h" },
+          pedDose: "30-50 mg/kg/day q6h.", adultDose: "250 - 500mg PO q6h.", renalDose: "No adjustment.", hepaticDose: "Caution.", elderlyDose: "Ototoxicity risk at high doses.", pregnancy: "Category B.", lactation: "Compatible.", modifiers: "Take before meals." },
+
+        { id: "rovamycin", class: "Macrolides", active: "Spiramycin", tradeName: "Rovamycin (1.5M, 3M IU)", form: "Tabs / Susp", company: "Sanofi",
+          contra: ["✖ Hypersensitivity to Spiramycin."], pedStandard: { min: 150000, max: 300000, text: "150,000-300,000 IU/kg/day divided q8h-q12h" }, pedSevere: { min: 300000, max: 300000, text: "300,000 IU/kg/day" },
+          pedDose: "150,000-300,000 IU/kg/day divided q8h.", adultDose: "6 - 9 Million IU PO daily in 2-3 divided doses.", renalDose: "No adjustment.", hepaticDose: "Caution.", elderlyDose: "Standard.", pregnancy: "Category B. First line choice for Toxoplasmosis in pregnancy!", lactation: "Compatible.", modifiers: "High tissue concentrations." },
+
+        // FLUOROQUINOLONES
+        { id: "cipro", class: "Fluoroquinolones", active: "Ciprofloxacin", tradeName: "Ciproxin / Ciprofloxacin (250, 500mg)", form: "Tabs / IV Solution", company: "Bayer / EIPICO / Amoun",
+          contra: ["✖ BLACK BOX: Tendonitis / Tendon rupture history.", "✖ Concurrent Tizanidine."], pedStandard: { min: 20, max: 30, text: "10-15 mg/kg q12h (RESTRICTED)" }, pedSevere: { min: 40, max: 40, text: "20 mg/kg q12h" },
+          pedDose: "RESTRICTED: 10-20 mg/kg q12h.", adultDose: "250 - 750mg PO q12h or 200-400mg IV q12h.", renalDose: "CrCl 30-50: q12h. CrCl <30: q24h.", hepaticDose: "No adjustment.", elderlyDose: "Tendon rupture risk.", pregnancy: "Category C. Contraindicated.", lactation: "Avoid.", modifiers: "Avoid antacids/dairy within 2h." },
+
+        { id: "tavanic", class: "Fluoroquinolones", active: "Levofloxacin", tradeName: "Tavanic / Levoxin (250, 500mg)", form: "Tabs / IV Solution", company: "Sanofi / Hikma / EIPICO",
+          contra: ["✖ Tendonitis history.", "✖ Myasthenia gravis.", "✖ QT prolongation."], pedStandard: { min: 10, max: 20, text: "8-10 mg/kg q12h (RESTRICTED)" }, pedSevere: { min: 20, max: 20, text: "10 mg/kg q12h" },
+          pedDose: "RESTRICTED: 8-10 mg/kg q12h (<5 yrs) or once daily (>5 yrs).", adultDose: "250 - 750mg PO/IV once daily.", renalDose: "CrCl 20-49: 500mg initial, 250mg q24h.", hepaticDose: "No adjustment.", elderlyDose: "Monitor ECG.", pregnancy: "Category C. Contraindicated.", lactation: "Avoid.", modifiers: "Respiratory Quinolone." },
+
+        { id: "avelox", class: "Fluoroquinolones", active: "Moxifloxacin", tradeName: "Avelox / Moxifloxacin (400mg)", form: "Tabs / IV Solution", company: "Bayer / EIPICO",
+          contra: ["✖ Tendonitis history.", "✖ Severe Hepatic Impairment.", "✖ QT prolongation."], pedStandard: { min: 0, max: 0, text: "CONTRAINDICATED in children" }, pedSevere: { min: 0, max: 0, text: "CONTRAINDICATED" },
+          pedDose: "CONTRAINDICATED in children <18 yrs.", adultDose: "400mg PO/IV once daily.", renalDose: "NO RENAL ADJUSTMENT NEEDED.", hepaticDose: "Avoid in severe cirrhosis.", elderlyDose: "Monitor QT interval.", pregnancy: "Category C. Avoid.", lactation: "Avoid.", modifiers: "NOT used for UTIs." },
+
+        { id: "noroxin", class: "Fluoroquinolones", active: "Norfloxacin", tradeName: "Noroxin / Norfloxacin (400mg)", form: "Tabs", company: "Merck / EIPICO",
+          contra: ["✖ Tendonitis history.", "✖ Pregnancy / Children."], pedStandard: { min: 0, max: 0, text: "Contraindicated in children" }, pedSevere: { min: 0, max: 0, text: "Contraindicated" },
+          pedDose: "Contraindicated in children <18 yrs.", adultDose: "400mg PO q12h.", renalDose: "CrCl < 30: 400mg once daily.", hepaticDose: "No adjustment.", elderlyDose: "Tendon rupture risk.", pregnancy: "Category C.", lactation: "Avoid.", modifiers: "Used primarily for UTIs & Prostatitis." },
+
+        { id: "tarivid", class: "Fluoroquinolones", active: "Ofloxacin", tradeName: "Tarivid / Ofloxacin (200, 400mg)", form: "Tabs / IV Solution", company: "Sanofi / EIPICO",
+          contra: ["✖ Quinolone hypersensitivity.", "✖ Tendonitis history."], pedStandard: { min: 0, max: 0, text: "Contraindicated in children" }, pedSevere: { min: 0, max: 0, text: "Contraindicated" },
+          pedDose: "Contraindicated in children <18 yrs.", adultDose: "200 - 400mg PO/IV q12h.", renalDose: "CrCl 20-50: 100-200mg q12h. CrCl <20: 100-200mg q24h.", hepaticDose: "No adjustment.", elderlyDose: "Monitor CNS side effects.", pregnancy: "Category C.", lactation: "Avoid.", modifiers: "Take on empty stomach." },
+
+        { id: "factive", class: "Fluoroquinolones", active: "Gemifloxacin", tradeName: "Factive (320mg)", form: "Tabs", company: "LG Life Sciences",
+          contra: ["✖ Tendonitis history.", "✖ Prolonged QTc interval."], pedStandard: { min: 0, max: 0, text: "Contraindicated" }, pedSevere: { min: 0, max: 0, text: "Contraindicated" },
+          pedDose: "Contraindicated in children.", adultDose: "320mg PO once daily for 5 days.", renalDose: "CrCl < 40: 160mg once daily.", hepaticDose: "No adjustment.", elderlyDose: "Standard.", pregnancy: "Category C.", lactation: "Avoid.", modifiers: "Potent against CAP and AECB." },
+
+        // CARBAPENEMS
+        { id: "meronem", class: "Carbapenems", active: "Meropenem", tradeName: "Meronem / Sunny Merop (500mg, 1g)", form: "Vial", company: "AstraZeneca / EIPICO / Amoun / Sunny / Julphar",
+          contra: ["✖ Anaphylaxis to Carbapenems."], pedStandard: { min: 30, max: 60, text: "10-20 mg/kg q8h" }, pedSevere: { min: 120, max: 120, text: "40 mg/kg q8h (Meningitis)" },
+          pedDose: "10-20 mg/kg q8h. Meningitis: 40 mg/kg q8h.", adultDose: "500mg - 1g IV q8h. Meningitis: 2g IV q8h.", renalDose: "CrCl 26-50: q12h. CrCl 10-25: 50% q12h. CrCl <10: 50% q24h.", hepaticDose: "No adjustment.", elderlyDose: "Adjust for CrCl.", pregnancy: "Category B.", lactation: "Compatible.", modifiers: "Ultra-broad spectrum." },
+
+        { id: "tienam", class: "Carbapenems", active: "Imipenem + Cilastatin", tradeName: "Tienam / Imipenem (500mg)", form: "Vial", company: "Merck / EIPICO / Amoun",
+          contra: ["✖ Anaphylaxis to Carbapenems.", "✖ Patients with CNS disorders/Seizures."], pedStandard: { min: 60, max: 100, text: "15-25 mg/kg q6h" }, pedSevere: { min: 100, max: 100, text: "25 mg/kg q6h" },
+          pedDose: "15-25 mg/kg q6h. CONTRAINDICATED in Meningitis (Seizures).", adultDose: "500mg IV q6h or 1g IV q8h.", renalDose: "CrCl 20-40: 250-500mg q8h. CrCl <20: 250-500mg q12h.", hepaticDose: "No adjustment.", elderlyDose: "Seizure risk in renal failure.", pregnancy: "Category C.", lactation: "Caution.", modifiers: "Cilastatin prevents renal metabolism." },
+
+        { id: "doribax", class: "Carbapenems", active: "Doripenem", tradeName: "Doribax (500mg)", form: "Vial", company: "Janssen",
+          contra: ["✖ Carbapenem allergy."], pedStandard: { min: 0, max: 0, text: "Not established in pediatrics" }, pedSevere: { min: 0, max: 0, text: "Not established" },
+          pedDose: "Safety not established in children.", adultDose: "500mg IV q8h (Infused over 1 or 4 hours).", renalDose: "CrCl 30-50: 250mg q8h. CrCl 11-29: 250mg q12h.", hepaticDose: "No adjustment.", elderlyDose: "Adjust for CrCl.", pregnancy: "Category B.", lactation: "Caution.", modifiers: "High stability against beta-lactamases." },
+
+        { id: "invanz", class: "Carbapenems", active: "Ertapenem", tradeName: "Invanz (1g)", form: "Vial", company: "MSD (Merck)",
+          contra: ["✖ Anaphylaxis to Carbapenems.", "✖ Severe Lidocaine allergy (if IM)."], pedStandard: { min: 30, max: 30, text: "15 mg/kg q12h (3m-12y)" }, pedSevere: { min: 30, max: 30, text: "15 mg/kg q12h" },
+          pedDose: "3m-12y: 15 mg/kg q12h. ≥13y: 1g once daily.", adultDose: "1g IV/IM once daily.", renalDose: "CrCl < 30: 500mg once daily.", hepaticDose: "No adjustment.", elderlyDose: "Standard.", pregnancy: "Category B.", lactation: "Compatible.", modifiers: "NO activity against Pseudomonas!" },
+
+        // GLYCOPEPTIDES
+        { id: "vancocin", class: "Glycopeptides", active: "Vancomycin", tradeName: "Vancocin / Vancolon / Vancobact (500mg, 1g)", form: "Vial", company: "Lilly / EIPICO / Amoun / Julphar / Pharco",
+          contra: ["✖ Hypersensitivity to Vancomycin."], pedStandard: { min: 40, max: 40, text: "10-15 mg/kg IV q6h" }, pedSevere: { min: 60, max: 60, text: "15-20 mg/kg IV q6h" },
+          pedDose: "10-15 mg/kg IV q6h-q8h.", adultDose: "15-20 mg/kg IV q8h-q12h. Oral C.diff: 125mg PO q6h.", renalDose: "Adjust via TDM trough levels (15-20 mcg/mL).", hepaticDose: "No adjustment.", elderlyDose: "Mandatory TDM.", pregnancy: "Category C.", lactation: "Compatible.", modifiers: "Infuse slowly to avoid Red Man Syndrome." },
+
+        { id: "targocid", class: "Glycopeptides", active: "Teicoplanin", tradeName: "Targocid / Teicoplanin (200, 400mg)", form: "Vial", company: "Sanofi / EIPICO",
+          contra: ["✖ Teicoplanin hypersensitivity."], pedStandard: { min: 10, max: 10, text: "10 mg/kg q12h for 3 doses, then 6-10 mg/kg daily" }, pedSevere: { min: 12, max: 12, text: "12 mg/kg daily" },
+          pedDose: "10 mg/kg q12h x 3 doses, then 6-10 mg/kg/day.", adultDose: "Loading: 400mg (6mg/kg) q12h x 3 doses, then 400mg IV/IM daily.", renalDose: "CrCl 40-60: Reduce dose 50%. CrCl <40: Give q3d.", hepaticDose: "No adjustment.", elderlyDose: "Adjust for CrCl.", pregnancy: "Category B.", lactation: "Caution.", modifiers: "Can be given as IM injection or rapid IV bolus!" },
+
+        // SULFONAMIDES
+        { id: "septrin", class: "Sulfonamides", active: "Sulfamethoxazole + Trimethoprim (Co-trimoxazole)", tradeName: "Septrin / Septrazole (400/80mg, 800/160mg)", form: "Tabs / Susp / Ampoule", company: "GSK / Amoun / EIPICO",
+          contra: ["✖ Infants < 2 months old (Kernicterus).", "✖ G6PD deficiency.", "✖ Severe megaloblastic anemia."], pedStandard: { min: 8, max: 10, text: "8-10 mg/kg/day TMP divided q12h" }, pedSevere: { min: 15, max: 20, text: "15-20 mg/kg/day TMP (PCP Pneumonia)" },
+          pedDose: "8-10 mg/kg/day TMP q12h.", adultDose: "1 - 2 Septrin DS tablets PO q12h.", renalDose: "CrCl 15-30: 50% dose. CrCl <15: Avoid.", hepaticDose: "Avoid in severe failure.", elderlyDose: "Risk of hyperkalemia.", pregnancy: "Category C (D in 3rd trim).", lactation: "Avoid if infant <2m.", modifiers: "Maintain adequate hydration." },
+
+        // TETRACYCLINES
+        { id: "vibra", class: "Tetracyclines", active: "Doxycycline", tradeName: "Vibramycin / Doxycycline (100mg)", form: "Caps / Susp", company: "Pfizer / EIPICO / Amoun / Hikma",
+          contra: ["✖ Children < 8 years old (Permanent tooth staining).", "✖ Pregnancy & Lactation."], pedStandard: { min: 2.2, max: 4.4, text: "2.2-4.4 mg/kg/day (>8 yrs only)" }, pedSevere: { min: 4.4, max: 4.4, text: "4.4 mg/kg/day" },
+          pedDose: "CONTRAINDICATED <8 yrs. >8 yrs: 2.2-4.4 mg/kg/day.", adultDose: "100mg PO q12h on Day 1, then 100mg daily or q12h.", renalDose: "NO RENAL ADJUSTMENT NEEDED.", hepaticDose: "Caution.", elderlyDose: "Standard.", pregnancy: "Category D. Contraindicated.", lactation: "Contraindicated.", modifiers: "Take upright with full glass of water." },
+
+        { id: "achromycin", class: "Tetracyclines", active: "Tetracycline", tradeName: "Achromycin / Tetracycline (250, 500mg)", form: "Caps / Susp", company: "Pfizer / EIPICO / Amoun",
+          contra: ["✖ Children < 8 years.", "✖ Pregnancy.", "✖ Severe renal impairment."], pedStandard: { min: 25, max: 50, text: "25-50 mg/kg/day (>8 yrs)" }, pedSevere: { min: 50, max: 50, text: "50 mg/kg/day" },
+          pedDose: "CONTRAINDICATED <8 yrs.", adultDose: "250mg - 500mg PO q6h.", renalDose: "CrCl 10-50: q12h-q24h. CrCl <10: Avoid.", hepaticDose: "Caution.", elderlyDose: "Avoid in renal impairment.", pregnancy: "Category D.", lactation: "Contraindicated.", modifiers: "Take 1h before or 2h after meals." },
+
+        { id: "minocin", class: "Tetracyclines", active: "Minocycline", tradeName: "Minocin / Minocycline (100mg)", form: "Caps", company: "Lederle / EIPICO",
+          contra: ["✖ Children < 8 years.", "✖ Pregnancy.", "✖ Systemic Lupus Erythematosus history."], pedStandard: { min: 4, max: 4, text: "4 mg/kg loading, then 2 mg/kg q12h" }, pedSevere: { min: 4, max: 4, text: "4 mg/kg/day" },
+          pedDose: "CONTRAINDICATED <8 yrs.", adultDose: "200mg initial, then 100mg PO q12h.", renalDose: "Max 200mg/day.", hepaticDose: "Caution.", elderlyDose: "Monitor vestibular side effects (vertigo).", pregnancy: "Category D.", lactation: "Contraindicated.", modifiers: "High lipophilicity; penetrates CNS." },
+
+        { id: "terramycin", class: "Tetracyclines", active: "Oxytetracycline", tradeName: "Terramycin (250, 500mg, 3% Oint)", form: "Caps / Ointment", company: "Pfizer / EIPICO",
+          contra: ["✖ Children < 8 years.", "✖ Pregnancy."], pedStandard: { min: 25, max: 50, text: "25-50 mg/kg/day (>8 yrs)" }, pedSevere: { min: 50, max: 50, text: "50 mg/kg/day" },
+          pedDose: "CONTRAINDICATED <8 yrs.", adultDose: "250mg - 500mg PO q6h.", renalDose: "Avoid in renal impairment.", hepaticDose: "Caution.", elderlyDose: "Avoid.", pregnancy: "Category D.", lactation: "Contraindicated.", modifiers: "Topical ointment widely used for skin/eye." },
+
+        // AMINOGLYCOSIDES
+        { id: "garamycin", class: "Aminoglycosides", active: "Gentamicin", tradeName: "Garamycin / Gentamicin (40mg/ml, 0.3% Eye, 0.1% Oint)", form: "Ampoules / Eye Drops / Ointment", company: "Schering-Plough / EIPICO / Amoun",
+          contra: ["✖ Aminoglycoside hypersensitivity.", "✖ Myasthenia gravis."], pedStandard: { min: 5, max: 7.5, text: "2.5 mg/kg q8h or 5-7.5 mg/kg once daily" }, pedSevere: { min: 7.5, max: 7.5, text: "7.5 mg/kg once daily" },
+          pedDose: "2.5 mg/kg q8h or 5-7.5 mg/kg once daily.", adultDose: "3 - 5 mg/kg/day IV divided q8h or once daily.", renalDose: "Mandatory TDM. Extend interval based on CrCl.", hepaticDose: "No adjustment.", elderlyDose: "Nephro & ototoxicity risk.", pregnancy: "Category D.", lactation: "Compatible.", modifiers: "Monitor serum peak/trough." },
+
+        { id: "amikin", class: "Aminoglycosides", active: "Amikacin", tradeName: "Amikin / Amikacin (100, 250, 500mg)", form: "Vial", company: "BMS / EIPICO / Amoun",
+          contra: ["✖ Aminoglycoside allergy."], pedStandard: { min: 15, max: 15, text: "15 mg/kg once daily or 7.5 mg/kg q12h" }, pedSevere: { min: 20, max: 20, text: "20 mg/kg once daily" },
+          pedDose: "15-20 mg/kg once daily.", adultDose: "15 mg/kg/day IV once daily or divided q12h.", renalDose: "TDM guided dosing.", hepaticDose: "No adjustment.", elderlyDose: "Nephrotoxic risk.", pregnancy: "Category D.", lactation: "Caution.", modifiers: "Resistant to aminoglycoside enzymes." },
+
+        { id: "tobrex", class: "Aminoglycosides", active: "Tobramycin", tradeName: "Tobrex / Tobramycin (0.3% Drops/Oint)", form: "Eye Drops / Ointment", company: "Alcon / EIPICO",
+          contra: ["✖ Tobramycin allergy."], pedStandard: { min: 6, max: 7.5, text: "6-7.5 mg/kg/day divided q8h" }, pedSevere: { min: 10, max: 10, text: "10 mg/kg/day (Cystic Fibrosis)" },
+          pedDose: "Systemic: 6-7.5 mg/kg/day. Ophthalmic: 1-2 drops q4h.", adultDose: "3 - 5 mg/kg/day IV q8h. Ophthalmic: 1-2 drops q4h.", renalDose: "Adjust based on TDM.", hepaticDose: "No adjustment.", elderlyDose: "Standard.", pregnancy: "Category D (Systemic) / Category B (Ophthalmic).", lactation: "Compatible.", modifiers: "Preferred aminoglycoside for Pseudomonas." },
+
+        { id: "netromycin", class: "Aminoglycosides", active: "Netilmicin", tradeName: "Netromycin / Netilmicin (150mg)", form: "Vial", company: "Pharmacia / EIPICO",
+          contra: ["✖ Aminoglycoside allergy."], pedStandard: { min: 6, max: 7.5, text: "2 to 2.5 mg/kg q8h" }, pedSevere: { min: 7.5, max: 9, text: "3 mg/kg q8h" },
+          pedDose: "6 - 7.5 mg/kg/day divided q8h.", adultDose: "4 - 6 mg/kg/day IV once daily or divided q8h-q12h.", renalDose: "Adjust interval via CrCl.", hepaticDose: "No adjustment.", elderlyDose: "Nephrotoxic risk.", pregnancy: "Category D.", lactation: "Caution.", modifiers: "Slightly lower ototoxicity than Gentamicin." },
+
+        { id: "kantrex", class: "Aminoglycosides", active: "Kanamycin", tradeName: "Kantrex / Kanamycin (500mg)", form: "Vial", company: "BMS / EIPICO",
+          contra: ["✖ Aminoglycoside allergy."], pedStandard: { min: 15, max: 15, text: "15 mg/kg/day divided q8h-q12h" }, pedSevere: { min: 15, max: 15, text: "15 mg/kg/day" },
+          pedDose: "15 mg/kg/day divided q8h-q12h.", adultDose: "15 mg/kg/day IV/IM divided q8h-q12h.", renalDose: "Adjust based on CrCl.", hepaticDose: "No adjustment.", elderlyDose: "High ototoxicity risk.", pregnancy: "Category D.", lactation: "Caution.", modifiers: "Second-line agent for MDR-TB." },
+
+        // LINCOSAMIDES
+        { id: "dalacin", class: "Lincosamides", active: "Clindamycin", tradeName: "Dalacin C / Dalacin T (150, 300, 600mg, 1% Gel)", form: "Caps / Susp / Vial / Gel", company: "Pfizer / EIPICO / Amoun",
+          contra: ["✖ History of Pseudomembranous colitis (C. diff)."], pedStandard: { min: 10, max: 20, text: "10-20 mg/kg/day q6h-q8h" }, pedSevere: { min: 25, max: 40, text: "25-40 mg/kg/day q6h" },
+          pedDose: "10-40 mg/kg/day divided q6h-q8h.", adultDose: "150-450mg PO q6h or 600-900mg IV q8h.", renalDose: "No dose adjustment required.", hepaticDose: "Reduce dose in severe liver failure.", elderlyDose: "High C. diff diarrhea risk.", pregnancy: "Category B.", lactation: "Compatible.", modifiers: "Excellent bone/tissue penetration for MRSA." },
+
+        { id: "lincocin", class: "Lincosamides", active: "Lincomycin", tradeName: "Lincocin / Lincomycin (300mg)", form: "Vial", company: "Pfizer / EIPICO",
+          contra: ["✖ History of C. diff colitis."], pedStandard: { min: 30, max: 60, text: "10-20 mg/kg/day divided q8h-q12h" }, pedSevere: { min: 60, max: 60, text: "20 mg/kg/day" },
+          pedDose: "10-20 mg/kg/day divided q8h-q12h.", adultDose: "500mg PO q8h or 600mg IM/IV q12h-q24h.", renalDose: "CrCl < 10: 25-50% standard dose.", hepaticDose: "Reduce dose in hepatic impairment.", elderlyDose: "Monitor diarrhea.", pregnancy: "Category B.", lactation: "Caution.", modifiers: "Parent compound of Clindamycin." },
+
+        // STREPTOGRAMINS & OXAZOLIDINONES
+        { id: "synercid", class: "Streptogramins", active: "Quinupristin + Dalfopristin", tradeName: "Synercid (500mg)", form: "Vial", company: "Aventis (Sanofi)",
+          contra: ["✖ Hypersensitivity to Streptogramins."], pedStandard: { min: 22.5, max: 22.5, text: "7.5 mg/kg IV q8h-q12h" }, pedSevere: { min: 22.5, max: 22.5, text: "7.5 mg/kg IV q8h" },
+          pedDose: "7.5 mg/kg IV q8h-q12h.", adultDose: "7.5 mg/kg IV q8h-q12h.", renalDose: "No dose adjustment needed.", hepaticDose: "Reduce dose in hepatic cirrhosis.", elderlyDose: "Monitor arthralgia/myalgia.", pregnancy: "Category B.", lactation: "Caution.", modifiers: "Infuse via central line to avoid phlebitis." },
+
+        { id: "zyvox", class: "Oxazolidinones", active: "Linezolid", tradeName: "Zyvox / Linezolid / Averozolid (600mg)", form: "Tabs / IV Solution", company: "Pfizer / EIPICO / Amoun / Averroes",
+          contra: ["✖ Concurrent use with SSRIs, SNRIs, MAOIs (Serotonin Syndrome risk)."], pedStandard: { min: 30, max: 30, text: "10 mg/kg q8h (<12 yrs)" }, pedSevere: { min: 30, max: 30, text: "10 mg/kg q8h" },
+          pedDose: "<12 yrs: 10 mg/kg q8h. ≥12 yrs: 600mg q12h.", adultDose: "600mg PO/IV q12h.", renalDose: "No dose adjustment required.", hepaticDose: "No adjustment.", elderlyDose: "Monitor CBC weekly.", pregnancy: "Category C.", lactation: "Caution.", modifiers: "Risk of bone marrow suppression if >14 days." },
+
+        // POLYMYXINS
+        { id: "colomycin", class: "Polymyxins", active: "Colistin (Colistimethate)", tradeName: "Colomycin / Colistin (1 Million IU)", form: "Vial", company: "Forest / EIPICO / Amoun",
+          contra: ["✖ Polymyxin hypersensitivity."], pedStandard: { min: 2.5, max: 2.5, text: "2.5 mg/kg/day divided q8h" }, pedSevere: { min: 5, max: 5, text: "5 mg/kg/day (Max 300mg/day)" },
+          pedDose: "2.5 - 5 mg/kg/day divided q8h.", adultDose: "Loading: 9 MIU IV, then 4.5 MIU q12h.", renalDose: "CrCl 30-50: 5.5 MIU/day. CrCl 10-30: 2.7 MIU/day.", hepaticDose: "No adjustment.", elderlyDose: "Severe nephro/neurotoxicity risk.", pregnancy: "Category C.", lactation: "Caution.", modifiers: "Last line for MDR Gram-negative rods." },
+
+        { id: "polyB", class: "Polymyxins", active: "Polymyxin B Sulfate", tradeName: "Polymyxin B (5000 IU/ml)", form: "Vial", company: "EIPICO",
+          contra: ["✖ Polymyxin hypersensitivity."], pedStandard: { min: 15000, max: 25000, text: "15,000-25,000 IU/kg/day divided q12h" }, pedSevere: { min: 25000, max: 25000, text: "25,000 IU/kg/day" },
+          pedDose: "15,000 - 25,000 IU/kg/day divided q12h.", adultDose: "15,000 - 25,000 IU/kg/day IV divided q12h.", renalDose: "No dose adjustment required (Non-renal elimination).", hepaticDose: "No adjustment.", elderlyDose: "Nephrotoxic risk.", pregnancy: "Category C.", lactation: "Caution.", modifiers: "Less nephrotoxic than Colistin." },
+
+        // NITROIMIDAZOLES & ANTIMYCOBACTERIALS
+        { id: "flagyl", class: "Nitroimidazoles", active: "Metronidazole", tradeName: "Flagyl / Metronidazole (250, 500mg)", form: "Tabs / Susp / IV Solution", company: "Sanofi / EIPICO",
+          contra: ["✖ Alcohol consumption (Disulfiram reaction).", "✖ 1st trimester pregnancy."], pedStandard: { min: 22.5, max: 30, text: "7.5-10 mg/kg q8h" }, pedSevere: { min: 45, max: 45, text: "15 mg/kg q8h" },
+          pedDose: "7.5-15 mg/kg q8h.", adultDose: "500mg PO/IV q8h.", renalDose: "CrCl < 10: 50% dose.", hepaticDose: "Reduce 50% in severe cirrhosis.", elderlyDose: "Monitor CNS toxicity.", pregnancy: "Avoid 1st trimester. Category B in 2nd/3rd.", lactation: "Discontinue breastfeeding.", modifiers: "Metallic taste." },
+
+        { id: "fasigyn", class: "Nitroimidazoles", active: "Tinidazole", tradeName: "Fasigyn (500mg)", form: "Tabs", company: "Pfizer",
+          contra: ["✖ Alcohol consumption.", "✖ 1st trimester pregnancy.", "✖ Blood dyscrasias."], pedStandard: { min: 50, max: 50, text: "50 mg/kg single dose (Max 2g)" }, pedSevere: { min: 50, max: 50, text: "50 mg/kg once daily x 3 days" },
+          pedDose: "50 mg/kg single dose (Max 2g).", adultDose: "2g PO single dose or 2g once daily for 3 days.", renalDose: "Give additional dose post-hemodialysis.", hepaticDose: "Caution.", elderlyDose: "Standard.", pregnancy: "Contraindicated 1st trimester. Category C.", lactation: "Avoid breastfeeding for 72h post-dose.", modifiers: "Longer half-life than Metronidazole." },
+
+        { id: "secnid", class: "Nitroimidazoles", active: "Secnidazole", tradeName: "Secnidazole (1g)", form: "Tabs", company: "EIPICO",
+          contra: ["✖ Alcohol consumption.", "✖ Pregnancy."], pedStandard: { min: 30, max: 30, text: "30 mg/kg single dose" }, pedSevere: { min: 30, max: 30, text: "30 mg/kg single dose" },
+          pedDose: "30 mg/kg single dose.", adultDose: "2g PO as a single dose.", renalDose: "No adjustment.", hepaticDose: "Caution.", elderlyDose: "Standard.", pregnancy: "Category C. Avoid.", lactation: "Avoid.", modifiers: "Single dose cure for Amebiasis & Giardiasis." },
+
+        { id: "rimactane", class: "Rifamycins", active: "Rifampicin", tradeName: "Rimactane / Rifampicin / Rimactazid (300mg, 300/150mg)", form: "Caps", company: "Sandoz / EIPICO / Amoun",
+          contra: ["✖ Concurrent Protease Inhibitors / Antiretrovirals.", "✖ Severe jaundice."], pedStandard: { min: 10, max: 20, text: "10-20 mg/kg once daily" }, pedSevere: { min: 20, max: 20, text: "20 mg/kg once daily" },
+          pedDose: "10-20 mg/kg once daily.", adultDose: "600mg PO/IV once daily.", renalDose: "No adjustment.", hepaticDose: "Monitor LFTs.", elderlyDose: "Monitor liver function.", pregnancy: "Category C.", lactation: "Compatible.", modifiers: "Red/orange urine discoloration." },
+
+        // PHENICOLS
+        { id: "chloramphenicol", class: "Phenicols", active: "Chloramphenicol", tradeName: "Chloromycetin / Chloramphenicol (250mg, 0.5% Drops, 1% Oint)", form: "Caps / Eye Drops / Ointment", company: "Parke-Davis / EIPICO",
+          contra: ["✖ Newborns (Gray Baby Syndrome).", "✖ Bone marrow depression history.", "✖ G6PD deficiency."], pedStandard: { min: 50, max: 50, text: "50 mg/kg/day divided q6h" }, pedSevere: { min: 75, max: 100, text: "75-100 mg/kg/day (Meningitis)" },
+          pedDose: "50-75 mg/kg/day divided q6h. CONTRAINDICATED in neonates.", adultDose: "500mg PO/IV q6h.", renalDose: "No adjustment required.", hepaticDose: "Avoid or reduce dose; monitor serum levels.", elderlyDose: "Aplastic anemia risk.", pregnancy: "Category C. Avoid at term (Gray Baby Syndrome).", lactation: "Contraindicated.", modifiers: "Aplastic anemia risk." }
+    ];
+
+    let currentSelectedDrug = null;
+
+    function renderDrugs() {
+        const searchText = document.getElementById("searchInput").value.toLowerCase();
+        const selectedClass = document.getElementById("classSelect").value;
+        const container = document.getElementById("drugsGrid");
+        container.innerHTML = "";
+
+        const filtered = egyptDatabase.filter(d => {
+            const matchesSearch = d.tradeName.toLowerCase().includes(searchText) || d.active.toLowerCase().includes(searchText);
+            const matchesClass = selectedClass === "all" || d.class === selectedClass;
+            return matchesSearch && matchesClass;
+        });
+
+        if (filtered.length === 0) {
+            container.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 2rem;">No matching antibiotics found.</p>`;
+            return;
+        }
+
+        filtered.forEach(drug => {
+            const card = document.createElement("div");
+            card.className = "drug-card";
+            card.onclick = () => openModal(drug);
+            card.innerHTML = `
+                <div class="drug-card-header">
+                    <span class="drug-class-badge">${drug.class}</span>
+                    <span class="click-hint"><i class="fa-solid fa-angles-right"></i> Clinical Page</span>
+                </div>
+                <div class="drug-info">
+                    <div>
+                        <div class="drug-name">${drug.tradeName}</div>
+                        <div class="drug-active">${drug.active}</div>
+                    </div>
+                    <div class="drug-meta">
+                        <span class="badge-form">${drug.form}</span>
+                        <span class="company-name">${drug.company}</span>
+                    </div>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    function openModal(drug) {
+        currentSelectedDrug = drug;
+        document.getElementById("modalDrugName").innerText = drug.tradeName;
+        document.getElementById("modalActiveName").innerHTML = `<i class="fa-solid fa-flask"></i> ${drug.active} (${drug.class})`;
+        
+        const contraList = document.getElementById("modalContraList");
+        contraList.innerHTML = drug.contra.map(c => `<li>${c}</li>`).join('');
+
+        document.getElementById("modalPedDose").innerText = drug.pedDose;
+        document.getElementById("modalAdultDose").innerText = drug.adultDose;
+        document.getElementById("modalRenalDose").innerText = drug.renalDose;
+        document.getElementById("modalHepaticDose").innerText = drug.hepaticDose;
+        document.getElementById("modalElderlyDose").innerText = drug.elderlyDose;
+        document.getElementById("modalPregnancy").innerText = drug.pregnancy;
+        document.getElementById("modalLactation").innerText = drug.lactation;
+        document.getElementById("modalModifiers").innerText = drug.modifiers;
+
+        document.getElementById("modalWeightInput").value = "";
+        document.getElementById("modalInfectionSite").value = "standard";
+        document.getElementById("modalCalcOutput").innerText = "Enter weight to calculate dose.";
+
+        document.getElementById("detailModal").classList.add("active");
+    }
+
+    function closeModal() {
+        document.getElementById("detailModal").classList.remove("active");
+    }
+
+    function calcModalPedDose() {
+        if(!currentSelectedDrug) return;
+        const w = parseFloat(document.getElementById("modalWeightInput").value);
+        const site = document.getElementById("modalInfectionSite").value;
+        const out = document.getElementById("modalCalcOutput");
+
+        if(!w || w <= 0) {
+            out.innerText = "Enter weight to calculate dose.";
+            return;
+        }
+
+        const rule = site === "severe" ? currentSelectedDrug.pedSevere : currentSelectedDrug.pedStandard;
+        
+        if (rule.min === 0 && rule.max === 0) {
+            out.innerHTML = `<span style="color:var(--primary-red);">${rule.text}</span>`;
+            return;
+        }
+
+        const min = (w * rule.min).toFixed(1);
+        const max = (w * rule.max).toFixed(1);
+
+        out.innerHTML = `
+            Calculated Dosing for ${w}kg (${site === "severe" ? "Severe/High-Dose" : "Standard/Mild"}):<br>
+            <span style="font-size:1.1rem; color:var(--primary-red);">${min === max ? min : min + ' - ' + max} mg/day</span> 
+            <span style="font-size:0.85rem; color:var(--accent-dark);">(${rule.text})</span>
+        `;
+    }
+
+    function switchTab(tabId, button = null) {
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+
+        const target = document.getElementById(`tab-${tabId}`);
+        if (target) target.classList.add('active');
+
+        const activeButton = button || document.querySelector(`.tab-btn[onclick*="switchTab('${tabId}'"]`);
+        if (activeButton) activeButton.classList.add('active');
+
+        window.scrollTo({ top: Math.max(0, target.getBoundingClientRect().top + window.scrollY - siteHeader.offsetHeight - 90), behavior: 'smooth' });
+    }
+
+    function calculateCrCl() {
+        const age = parseFloat(document.getElementById('age').value);
+        const weight = parseFloat(document.getElementById('weight').value);
+        const scr = parseFloat(document.getElementById('scr').value);
+        const gender = parseFloat(document.getElementById('gender').value);
+
+        if(!age || !weight || !scr) {
+            alert('Please enter all required fields.');
+            return;
+        }
+
+        let crcl = ((140 - age) * weight) / (72 * scr);
+        crcl = crcl * gender;
+
+        const resultDiv = document.getElementById('calcResult');
+        resultDiv.style.display = 'block';
+        
+        let status = "";
+        if (crcl > 80) status = "Normal Renal Clearance.";
+        else if (crcl >= 50) status = "Mild Renal Impairment — Minor dose reductions may apply.";
+        else if (crcl >= 30) status = "Moderate Impairment — Reduce dose by ~50% or extend interval.";
+        else status = "Severe Impairment — Requires extended intervals & continuous TDM.";
+
+        resultDiv.innerHTML = `CrCl: <strong>${crcl.toFixed(1)} mL/min</strong><br><span style="font-size:0.85rem;">${status}</span>`;
+    }
+
+
+    /* =========================
+       Premium interactions
+    ========================= */
+    const siteHeader = document.getElementById('siteHeader');
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+
+    function updateHeaderOnScroll() {
+        if (window.scrollY > 24) siteHeader.classList.add('scrolled');
+        else siteHeader.classList.remove('scrolled');
+    }
+    window.addEventListener('scroll', updateHeaderOnScroll, { passive: true });
+    updateHeaderOnScroll();
+
+    function toggleMobileMenu() {
+        const isOpen = siteHeader.classList.toggle('menu-open');
+        mobileMenuBtn.setAttribute('aria-expanded', String(isOpen));
+        mobileMenuBtn.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
+        mobileMenuBtn.innerHTML = isOpen
+            ? '<i class="fa-solid fa-xmark"></i>'
+            : '<i class="fa-solid fa-bars"></i>';
+    }
+
+    function mobileNavClose() {
+        siteHeader.classList.remove('menu-open');
+        mobileMenuBtn.setAttribute('aria-expanded', 'false');
+        mobileMenuBtn.setAttribute('aria-label', 'Open menu');
+        mobileMenuBtn.innerHTML = '<i class="fa-solid fa-bars"></i>';
+    }
+
+    document.addEventListener('click', (e) => {
+        if (!siteHeader.contains(e.target)) mobileNavClose();
+    });
+
+    // Apple-inspired scroll reveal: sections gently enter the viewport.
+    const revealObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.12, rootMargin: '0px 0px -45px 0px' });
+
+    document.querySelectorAll('.reveal-on-scroll').forEach(el => revealObserver.observe(el));
+
+    // Smooth anchor navigation with sticky-header offset.
+    document.querySelectorAll('a[href^="#tab-"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            const target = document.querySelector(link.getAttribute('href'));
+            if (!target) return;
+            e.preventDefault();
+            const offset = siteHeader.offsetHeight + 88;
+            const y = target.getBoundingClientRect().top + window.scrollY - offset;
+            window.scrollTo({ top: y, behavior: 'smooth' });
+        });
+    });
+
+    renderDrugs();
+</script>
+
+
+
+<script>
+/* =========================================================
+   Antibiogram Desk — unified premium interaction layer
+   ========================================================= */
+(function(){
+  const header = document.getElementById('siteHeader');
+  const menuBtn = document.getElementById('mobileMenuBtn');
+  const navLinks = [...document.querySelectorAll('.header-nav .nav-link')];
+
+  window.toggleMobileMenu = function(){
+    const open = header.classList.toggle('menu-open');
+    menuBtn.setAttribute('aria-expanded', String(open));
+    menuBtn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    menuBtn.innerHTML = open
+      ? '<i class="fa-solid fa-xmark"></i>'
+      : '<i class="fa-solid fa-bars"></i>';
+  };
+
+  window.mobileNavClose = function(){
+    header.classList.remove('menu-open');
+    menuBtn.setAttribute('aria-expanded','false');
+    menuBtn.setAttribute('aria-label','Open menu');
+    menuBtn.innerHTML = '<i class="fa-solid fa-bars"></i>';
+  };
+
+  window.goToSection = function(section){
+    if(section === 'about'){
+      document.getElementById('about')?.scrollIntoView({behavior:'smooth', block:'start'});
+      navLinks.forEach(a => a.classList.toggle('active', a.dataset.section === 'about'));
+      mobileNavClose();
+      return;
+    }
+    if(typeof switchTab === 'function') switchTab(section);
+    navLinks.forEach(a => a.classList.toggle('active', a.dataset.section === section));
+    mobileNavClose();
+  };
+
+  function updateHeader(){
+    header.classList.toggle('scrolled', window.scrollY > 18);
+    const max = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    let progress = document.getElementById('scrollProgress');
+    if(!progress){
+      progress = document.createElement('div');
+      progress.id = 'scrollProgress';
+      progress.className = 'scroll-progress';
+      document.body.appendChild(progress);
+    }
+    progress.style.width = (max > 0 ? window.scrollY / max * 100 : 0) + '%';
+  }
+  window.addEventListener('scroll', updateHeader, {passive:true});
+  updateHeader();
+
+  document.addEventListener('click', e => {
+    if(!header.contains(e.target)) mobileNavClose();
+  });
+
+  const revealObserver = new IntersectionObserver((entries, observer)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        entry.target.classList.add('is-visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, {threshold:.10, rootMargin:'0px 0px -45px 0px'});
+
+  document.querySelectorAll('.reveal-on-scroll').forEach(el=>revealObserver.observe(el));
+
+  document.querySelectorAll('.drug-card,.creator-card,.filter-card,.about-feature').forEach(el=>{
+    el.addEventListener('pointermove', e=>{
+      const r = el.getBoundingClientRect();
+      el.style.setProperty('--mx', ((e.clientX-r.left)/r.width*100)+'%');
+      el.style.setProperty('--my', ((e.clientY-r.top)/r.height*100)+'%');
+    });
+  });
+
+  // Keep the header navigation in sync with the visible workspace.
+  const observed = ['market','antibiogram','calculator'].map(id=>document.getElementById('tab-'+id)).filter(Boolean);
+  const about = document.getElementById('about');
+  if(about) observed.push(about);
+
+  const sectionObserver = new IntersectionObserver(entries=>{
+    const visible = entries.filter(x=>x.isIntersecting).sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];
+    if(!visible) return;
+    const id = visible.target.id.replace('tab-','');
+    navLinks.forEach(a=>a.classList.toggle('active', a.dataset.section === id));
+  }, {rootMargin:'-28% 0px -55% 0px', threshold:[0,.15,.35]});
+
+  observed.forEach(section=>sectionObserver.observe(section));
+
+  // Keyboard escape closes the mobile menu and the clinical modal.
+  document.addEventListener('keydown', e=>{
+    if(e.key === 'Escape'){
+      mobileNavClose();
+      if(typeof closeModal === 'function') closeModal();
+    }
+  });
+})();
+</script>
+
+
+<script>
+/* =========================================================
+   ADDED ONLY — persistent Dark / Light mode
+   ========================================================= */
+(function(){
+  const key = 'antibiogram-theme';
+  const saved = localStorage.getItem(key);
+  const preferred = saved === 'dark' || saved === 'light' ? saved : 'light';
+
+  document.body.classList.toggle('dark-mode', preferred === 'dark');
+  document.body.classList.toggle('light-mode', preferred === 'light');
+
+  window.updateThemeButton = function(){
+    const btn = document.getElementById('themeToggle');
+    if(!btn) return;
+    const dark = document.body.classList.contains('dark-mode');
+    btn.setAttribute('aria-pressed', String(dark));
+    btn.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
+    const thumb = btn.querySelector('.theme-thumb i');
+    if(thumb) thumb.className = dark ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+  };
+
+  window.toggleTheme = function(){
+    const dark = !document.body.classList.contains('dark-mode');
+    document.body.classList.toggle('dark-mode', dark);
+    document.body.classList.toggle('light-mode', !dark);
+    localStorage.setItem(key, dark ? 'dark' : 'light');
+    updateThemeButton();
+  };
+
+  updateThemeButton();
+})();
+</script>
+
+</body>
+</html>
