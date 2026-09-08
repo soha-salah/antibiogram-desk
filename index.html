@@ -6,6 +6,9 @@
     <title>Antibiogram Desk | Clinical Guide & Dosing Calculator</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
     <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
@@ -795,7 +798,11 @@ body{
   padding-bottom:9px!important;
   background:rgba(23,27,33,.82)!important;
 }
-.header-inner{max-width:1320px;min-height:56px}
+..header-inner{
+  max-width:1400px;
+  min-height:52px;
+  gap:10px;
+}header-inner{max-width:1320px;min-height:56px}
 .header-inner::after{background:linear-gradient(90deg,transparent,rgba(255,255,255,.24),transparent)!important}
 
 .brand{
@@ -821,8 +828,11 @@ body{
 .brand-copy small{margin-top:7px;font-size:8px;letter-spacing:.20em;color:rgba(255,255,255,.53);font-weight:750}
 
 .header-nav{
-  display:flex!important;align-items:center;gap:4px;
-  margin-left:auto;
+  display:flex!important;
+  align-items:center;
+  gap:6px;
+  margin-left:28px;
+
 }
 .header-nav .nav-link{
   position:relative;
@@ -835,13 +845,28 @@ body{
   text-decoration:none;
   transition:color .3s ease,background .3s ease,transform .3s var(--ease);
 }
-.header-nav .nav-link i{font-size:.78rem;opacity:.82}
+.header-nav .nav-link i{
+  font-size:.68rem;
+  opacity:.82;
+}
 .header-nav .nav-link::after{
   content:"";position:absolute;left:50%;bottom:3px;width:0;height:2px;
   border-radius:9px;background:#ff5b65;transform:translateX(-50%);
   transition:width .35s var(--ease);
 }
-.header-nav .nav-link:hover,
+.header-nav .nav-link:hover,.header-nav .nav-link{
+  position:relative;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  padding:7px 9px!important;
+  border-radius:9px;
+  color:rgba(255,255,255,.68)!important;
+  font-size:.70rem!important;
+  font-weight:700!important;
+  text-decoration:none;
+  transition:color .3s ease,background .3s ease,transform .3s var(--ease);
+}
 .header-nav .nav-link.active{
   color:#fff!important;background:rgba(255,255,255,.075);
   transform:translateY(-1px);
@@ -1226,6 +1251,176 @@ body.dark-mode footer{background:#080b0f!important;}
     gap: 8px !important; /* تقليل المسافة بين اللوجو وباقي العناصر */
   }
 }
+
+/* =========================
+   PHARMACIES TAB
+========================= */
+.pharmacies-tab{padding:4px 0 0;}
+.pharmacy-hero{background:linear-gradient(135deg,#fff7f7,#fff);border:1px solid rgba(211,47,47,.14);border-left:4px solid var(--primary-red);border-radius:18px;padding:22px 24px;margin-bottom:16px;box-shadow:var(--shadow);}
+.pharmacy-hero h2{color:var(--primary-dark-red);font-size:1.35rem;margin-bottom:7px;}
+.pharmacy-hero p{color:var(--text-muted);line-height:1.65;font-size:.9rem;}
+.pharmacy-search-panel{background:var(--card-bg);border:1px solid var(--border-color);border-radius:18px;padding:16px;box-shadow:var(--shadow);margin-bottom:14px;}
+.pharmacy-toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;}
+.pharmacy-search-box{position:relative;flex:1 1 360px;min-width:240px;}
+.pharmacy-search-box>i{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-muted);z-index:2;}
+.pharmacy-search{width:100%;height:48px;padding:12px 15px 12px 40px;border:1px solid var(--border-color);border-radius:12px;background:var(--card-bg);color:var(--text-main);outline:none;box-sizing:border-box;}
+.pharmacy-search:focus{border-color:var(--primary-red);box-shadow:0 0 0 3px rgba(211,47,47,.1);}
+.pharmacy-search-btn,.pharmacy-load-btn{height:48px;border-radius:12px;padding:0 18px;font-weight:800;cursor:pointer;border:1px solid var(--border-color);white-space:nowrap;}
+.pharmacy-load-btn{background:rgba(211,47,47,.07);color:var(--primary-dark-red);}
+.pharmacy-load-btn:hover{background:var(--primary-red);color:#fff;border-color:var(--primary-red);}
+.pharmacy-map-status{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:rgba(211,47,47,.055);border:1px solid rgba(211,47,47,.12);border-radius:12px;padding:10px 12px;margin-bottom:13px;color:var(--text-muted);font-size:.78rem;}
+.pharmacy-map-status strong{color:var(--primary-dark-red);}
+.pharmacy-filter-title{font-size:.8rem;font-weight:800;color:var(--text-main);margin-bottom:8px;}
+.gov-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;}
+.gov-btn{background:var(--card-bg);border:1px solid var(--border-color);color:var(--text-main);padding:10px 8px;border-radius:11px;cursor:pointer;font-size:.78rem;font-weight:800;transition:.22s ease;display:flex;flex-direction:column;align-items:center;gap:2px;line-height:1.25}.gov-btn small{font-size:.62rem;opacity:.58;font-weight:600}.gov-btn:hover,.gov-btn.active{background:var(--primary-red);color:#fff;border-color:var(--primary-red);transform:translateY(-1px)}
+.pharmacy-map-wrap{background:var(--card-bg);border:1px solid var(--border-color);border-radius:18px;padding:10px;box-shadow:var(--shadow);margin-bottom:18px;}
+#pharmacyMap{height:500px;border-radius:13px;overflow:hidden;background:#e9eef1;}
+.pharmacy-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;}
+.pharmacy-card{background:var(--card-bg);border:1px solid var(--border-color);border-radius:16px;padding:17px;box-shadow:var(--shadow);transition:.25s ease;}
+.pharmacy-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-hover);}
+.pharmacy-card h3{font-size:1rem;color:var(--text-main);margin-bottom:7px;}
+.pharmacy-card .pharm-meta{color:var(--text-muted);font-size:.78rem;line-height:1.6;min-height:50px;}
+.pharmacy-actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
+.pharmacy-actions button,.pharmacy-actions a{border-radius:10px;padding:9px 11px;font-size:.76rem;font-weight:700;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;}
+.pharm-map-btn{background:var(--primary-red);color:#fff;border:0;}
+.pharm-call-btn{background:rgba(52,58,64,.08);color:var(--text-main);border:1px solid var(--border-color);}
+.pharmacy-note{font-size:.74rem;color:var(--text-muted);margin-top:13px;line-height:1.55;}
+.pharmacy-section-title{display:flex;align-items:flex-start;gap:12px;margin:28px 0 14px;padding:4px 2px;}
+.pharmacy-section-line{width:5px;min-width:5px;height:48px;border-radius:99px;background:var(--primary-red);box-shadow:0 6px 18px rgba(211,47,47,.18);}
+.pharmacy-section-title h2{margin:0;color:var(--text-main);font-size:1.28rem;font-weight:800;}
+.pharmacy-section-title h2 i{color:var(--primary-red);margin-inline-end:7px;}
+.pharmacy-section-title p{margin:5px 0 0;color:var(--text-muted);font-size:.78rem;line-height:1.6;}
+.pharmacy-popup-title{font-weight:800;font-size:.9rem;margin-bottom:4px;}
+.pharmacy-popup-address{font-size:.74rem;line-height:1.45;color:#5f6368;}
+.leaflet-popup-content-wrapper{border-radius:12px;}
+.pharmacy-loading-dot{width:8px;height:8px;border-radius:50%;background:var(--primary-red);display:inline-block;margin-inline-end:5px;animation:pharmPulse 1s infinite ease-in-out;}
+@keyframes pharmPulse{0%,100%{opacity:.35;transform:scale(.85)}50%{opacity:1;transform:scale(1)}}
+body.dark-mode .pharmacy-hero{background:linear-gradient(135deg,#241518,#11161b);border-color:rgba(255,255,255,.08);border-left-color:var(--primary-red);}
+body.dark-mode .pharmacy-search-panel,body.dark-mode .pharmacy-search,body.dark-mode .pharmacy-map-wrap,body.dark-mode .gov-btn,body.dark-mode .pharmacy-card{background:#11161b;color:#f3f4f6;border-color:rgba(255,255,255,.09);}
+body.dark-mode .pharmacy-card h3,body.dark-mode .pharmacy-filter-title{color:#f3f4f6;}
+body.dark-mode .pharm-call-btn{color:#f3f4f6;background:rgba(255,255,255,.06);}
+body.dark-mode .pharmacy-load-btn{color:#f3f4f6;background:rgba(255,255,255,.06);}
+@media(max-width:700px){#pharmacyMap{height:390px}.pharmacy-search-btn,.pharmacy-load-btn{flex:1}.pharmacy-section-title h2{font-size:1.08rem}.pharmacy-section-title p{font-size:.72rem}}
+
+/* =========================================================
+   ULTRA PREMIUM MOTION LAYER — visual enhancement only
+   ========================================================= */
+:root{
+  --premium-glow:rgba(201,21,34,.24);
+  --premium-glass:rgba(255,255,255,.72);
+  --premium-ease:cubic-bezier(.16,1,.3,1);
+}
+body{position:relative;isolation:isolate;}
+body::before,body::after{
+  content:"";position:fixed;z-index:-2;pointer-events:none;border-radius:50%;filter:blur(2px);
+  opacity:.8;animation:premiumFloat 16s ease-in-out infinite alternate;
+}
+body::before{width:420px;height:420px;left:-180px;top:18%;background:radial-gradient(circle,rgba(201,21,34,.10),transparent 68%);}
+body::after{width:520px;height:520px;right:-230px;top:58%;background:radial-gradient(circle,rgba(35,45,55,.10),transparent 68%);animation-delay:-7s;}
+@keyframes premiumFloat{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(28px,-24px,0) scale(1.08)}}
+
+/* animated premium grid */
+.container{position:relative;}
+.container::before{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.22;
+  background-image:linear-gradient(rgba(20,25,30,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(20,25,30,.025) 1px,transparent 1px);
+  background-size:34px 34px;
+  mask-image:linear-gradient(to bottom,transparent 0%,#000 15%,#000 82%,transparent 100%);
+}
+
+/* premium header */
+.site-header{transition:box-shadow .45s var(--premium-ease),background .45s ease,transform .45s var(--premium-ease)!important;}
+.site-header::before{
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:.45;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.06),transparent);
+  background-size:200% 100%;animation:headerSheen 8s linear infinite;
+}
+@keyframes headerSheen{from{background-position:-200% 0}to{background-position:200% 0}}
+.header-nav .nav-link{overflow:hidden;}
+.header-nav .nav-link::before{
+  content:"";position:absolute;inset:0;border-radius:inherit;background:radial-gradient(circle at 50% 120%,rgba(255,91,101,.18),transparent 60%);opacity:0;transition:opacity .35s ease;
+}
+.header-nav .nav-link:hover::before,.header-nav .nav-link.active::before{opacity:1}
+.header-nav .nav-link i{transition:transform .35s var(--premium-ease),color .35s ease;}
+.header-nav .nav-link:hover i,.header-nav .nav-link.active i{transform:translateY(-1px) scale(1.08);color:#ff6670}
+
+/* floating theme control */
+.theme-toggle{box-shadow:0 8px 24px rgba(0,0,0,.12),inset 0 1px 0 rgba(255,255,255,.28)!important;transition:transform .35s var(--premium-ease),box-shadow .35s ease!important;}
+.theme-toggle:hover{transform:translateY(-2px) rotate(-2deg);box-shadow:0 14px 32px rgba(0,0,0,.18),0 0 0 4px rgba(201,21,34,.07)!important}
+
+/* tabs become premium glass pills */
+.tabs{padding:7px!important;border:1px solid rgba(255,255,255,.7);background:rgba(255,255,255,.62)!important;backdrop-filter:blur(18px) saturate(135%);-webkit-backdrop-filter:blur(18px) saturate(135%);box-shadow:0 18px 55px rgba(20,25,30,.08),inset 0 1px 0 rgba(255,255,255,.8);}
+.tab-btn{position:relative;overflow:hidden!important;transition:transform .35s var(--premium-ease),box-shadow .35s ease,color .3s ease,background .3s ease!important;}
+.tab-btn::before{content:"";position:absolute;width:180px;height:180px;left:50%;top:50%;transform:translate(-50%,-50%) scale(0);border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.22),transparent 68%);transition:transform .5s var(--premium-ease);pointer-events:none;}
+.tab-btn:hover::before,.tab-btn.active::before{transform:translate(-50%,-50%) scale(1)}
+.tab-btn:hover{transform:translateY(-2px)!important;box-shadow:0 10px 25px rgba(20,25,30,.10)!important}
+.tab-btn.active{box-shadow:0 12px 28px rgba(201,21,34,.18),inset 0 1px 0 rgba(255,255,255,.2)!important}
+
+/* cards: lift + light sweep */
+.drug-card,.filter-card,.calc-box,.creator-card,.about-feature,.pharmacy-card,.pharmacy-search-panel,.pharmacy-map-wrap,.instruction-banner{
+  position:relative;overflow:hidden;transition:transform .45s var(--premium-ease),box-shadow .45s ease,border-color .35s ease!important;
+}
+.drug-card::after,.filter-card::after,.calc-box::after,.creator-card::after,.about-feature::after,.pharmacy-card::after,.pharmacy-search-panel::after,.pharmacy-map-wrap::after{
+  content:"";position:absolute;inset:-120% -35%;pointer-events:none;transform:translateX(-75%) rotate(14deg);
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.22),transparent);transition:transform .8s var(--premium-ease);
+}
+.drug-card:hover,.filter-card:hover,.calc-box:hover,.creator-card:hover,.about-feature:hover,.pharmacy-card:hover,.pharmacy-search-panel:hover,.pharmacy-map-wrap:hover{transform:translateY(-6px)!important;box-shadow:0 24px 55px rgba(18,24,32,.13)!important;border-color:rgba(201,21,34,.16)!important}
+.drug-card:hover::after,.filter-card:hover::after,.calc-box:hover::after,.creator-card:hover::after,.about-feature:hover::after,.pharmacy-card:hover::after,.pharmacy-search-panel:hover::after,.pharmacy-map-wrap:hover::after{transform:translateX(75%) rotate(14deg)}
+
+/* inputs */
+input,select,textarea{transition:border-color .3s ease,box-shadow .3s ease,transform .3s var(--premium-ease)!important;}
+input:focus,select:focus,textarea:focus{transform:translateY(-1px);box-shadow:0 0 0 4px rgba(201,21,34,.08),0 12px 28px rgba(18,24,32,.06)!important;}
+
+/* buttons */
+button,.pharm-call-btn,.pharm-map-btn,.pharmacy-actions a{transition:transform .32s var(--premium-ease),box-shadow .32s ease,filter .32s ease!important;}
+button:hover,.pharmacy-actions a:hover{filter:saturate(1.08)}
+button:active,.pharmacy-actions a:active{transform:translateY(1px) scale(.98)!important}
+
+/* pharmacy map frame */
+.pharmacy-map-wrap{box-shadow:0 22px 60px rgba(18,24,32,.10)!important;}
+.pharmacy-map-wrap::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:2;box-shadow:inset 0 0 0 1px rgba(255,255,255,.55),inset 0 0 35px rgba(0,0,0,.06)}
+#pharmacyMap{filter:saturate(.92) contrast(1.02);}
+.leaflet-control-zoom a{transition:transform .25s ease,background .25s ease!important;}
+.leaflet-control-zoom a:hover{transform:scale(1.08);}
+
+/* section titles */
+.pharmacy-section-title,.section-title,.about-copy{animation:softIn .8s var(--premium-ease) both;}
+@keyframes softIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+/* elegant footer */
+footer{position:relative;overflow:hidden!important;background:linear-gradient(135deg,#15191e,#252b33)!important;box-shadow:0 -20px 60px rgba(18,24,32,.10)!important;}
+footer::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);}
+footer::after{content:"";position:absolute;width:280px;height:280px;right:-130px;top:-190px;border-radius:50%;background:radial-gradient(circle,rgba(201,21,34,.18),transparent 70%);pointer-events:none;}
+
+/* scroll reveal enhancement */
+.reveal-on-scroll{transition:opacity .75s var(--premium-ease),transform .75s var(--premium-ease)!important;}
+.reveal-on-scroll:not(.is-visible){opacity:0;transform:translateY(18px) scale(.985);}
+.reveal-on-scroll.is-visible{opacity:1;transform:none;}
+
+/* dark mode premium surfaces */
+body.dark-mode::before{background:radial-gradient(circle,rgba(201,21,34,.15),transparent 68%)}
+body.dark-mode::after{background:radial-gradient(circle,rgba(110,125,140,.08),transparent 68%)}
+body.dark-mode .tabs{background:rgba(17,22,27,.68)!important;border-color:rgba(255,255,255,.08);box-shadow:0 20px 55px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.05)}
+body.dark-mode .container::before{opacity:.10;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px)}
+body.dark-mode .drug-card:hover,body.dark-mode .filter-card:hover,body.dark-mode .calc-box:hover,body.dark-mode .creator-card:hover,body.dark-mode .about-feature:hover,body.dark-mode .pharmacy-card:hover{box-shadow:0 24px 55px rgba(0,0,0,.32)!important}
+
+@media(max-width:800px){
+  body::before,body::after{opacity:.45}
+  .tabs{border-radius:16px!important;}
+  .header-nav .nav-link{padding:9px 10px!important}
+}
+@media(prefers-reduced-motion:reduce){
+  body::before,body::after,.site-header::before{animation:none!important}
+  .drug-card,.filter-card,.calc-box,.creator-card,.about-feature,.pharmacy-card,.pharmacy-search-panel,.pharmacy-map-wrap{transition:none!important}
+}
+.brand-copy strong{
+  white-space:nowrap!important;
+}
+p.tagline, .tagline {
+  font-size: 0.70rem !important; /* يمكنك تصغير الرقم حسب الرغبة */
+  max-width: 270px;              /* يضمن تحكم أفضل في المساحة */
+  line-height: 1.25;
+}
 </style>
 </head>
 <body>
@@ -1252,12 +1447,15 @@ body.dark-mode footer{background:#080b0f!important;}
       <a class="nav-link" data-section="calculator" href="#tab-calculator" onclick="goToSection('calculator'); return false;">
         <i class="fa-solid fa-calculator"></i><span>Calculator</span>
       </a>
+      <a class="nav-link" data-section="pharmacies" href="#tab-pharmacies" onclick="goToSection('pharmacies'); return false;">
+        <i class="fa-solid fa-location-dot"></i><span>Pharmacies</span>
+      </a>
       <a class="nav-link nav-about" data-section="about" href="#about" onclick="goToSection('about'); return false;">
         <i class="fa-solid fa-circle-info"></i><span>About</span>
       </a>
     </nav>
 
-    <p class="tagline">Antibiotic reference, market lookup &amp; renal dosing tools — designed for a cleaner clinical workflow.</p>
+    <p class="tagline">Antibiotic reference, pharmacy locations &amp; renal dosing tools designed for a cleaner clinical workflow.</p>
 
     <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to dark mode" aria-pressed="false" onclick="toggleTheme()">
       <span class="theme-icon"><i class="fa-solid fa-moon"></i></span>
@@ -1282,6 +1480,7 @@ body.dark-mode footer{background:#080b0f!important;}
         <button class="tab-btn active" onclick="switchTab('market', this)"><i class="fa-solid fa-pills"></i> Egyptian Market Database</button>
         <button class="tab-btn" onclick="switchTab('antibiogram', this)"><i class="fa-solid fa-table-cells"></i> Sensitivity Map (Antibiogram)</button>
         <button class="tab-btn" onclick="switchTab('calculator', this)"><i class="fa-solid fa-calculator"></i> Renal Clearance Calculator</button>
+        <button class="tab-btn" onclick="switchTab('pharmacies', this)"><i class="fa-solid fa-location-dot"></i> Pharmacies & Locations</button>
     </div>
 
     <!-- TAB 1: Egyptian Market -->
@@ -1398,6 +1597,56 @@ body.dark-mode footer{background:#080b0f!important;}
             <div id="calcResult" class="calc-result"></div>
         </div>
     </div>
+</div>
+
+
+<!-- TAB 4: Pharmacies -->
+<div id="tab-pharmacies" class="tab-content">
+  <div class="pharmacies-tab">
+    <div class="pharmacy-hero reveal-on-scroll">
+      <h2><i class="fa-solid fa-location-dot"></i> Pharmacies Across Egypt</h2>
+      <p>ابحث عن أي صيدلية، اختار المحافظة، أو استخدم قسم أشهر الصيدليات. الخريطة تحمّل الصيدليات المتاحة علناً على حسب المنطقة التي تشاهدها. </p>
+    </div>
+
+    <div class="pharmacy-search-panel">
+      <div class="pharmacy-toolbar">
+        <div class="pharmacy-search-box">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input id="pharmacySearch" class="pharmacy-search" type="text" placeholder="Search pharmacy or location...">
+        </div>
+        <button class="calc-btn pharmacy-search-btn" type="button" onclick="searchPharmacies()">
+          <i class="fa-solid fa-magnifying-glass"></i> Search
+        </button>
+        <button class="pharmacy-load-btn" type="button" onclick="loadEgyptPharmacies()">
+          <i class="fa-solid fa-map-location-dot"></i> Load all Egypt
+        </button>
+      </div>
+
+      <div class="pharmacy-map-status">
+        <span id="pharmacyStatus">جاهز لتحميل مواقع الصيدليات...</span>
+        <strong><i class="fa-solid fa-location-dot"></i> <span id="pharmacyCount">0</span> pharmacies mapped</strong>
+      </div>
+
+      <div class="pharmacy-filter-title"><i class="fa-solid fa-filter"></i> اختار المحافظة لتحميل الصيدليات على الخريطة</div>
+      <div id="governorateGrid" class="gov-grid"></div>
+    </div>
+
+    <div class="pharmacy-map-wrap">
+      <div id="pharmacyMap"></div>
+    </div>
+
+    <div class="pharmacy-section-title">
+      <span class="pharmacy-section-line"></span>
+      <div>
+        <h2><i class="fa-solid fa-star"></i>The Most Famous</h2>
+        <p>أشهر سلاسل وأسماء الصيدليات المعروفة في مصر</p>
+      </div>
+    </div>
+
+    <div id="pharmacyCards" class="pharmacy-grid"></div>
+
+    
+  </div>
 </div>
 
 <!-- Antibiotic Clinical Detail Modal -->
@@ -2019,7 +2268,7 @@ body.dark-mode footer{background:#080b0f!important;}
   });
 
   // Keep the header navigation in sync with the visible workspace.
-  const observed = ['market','antibiogram','calculator'].map(id=>document.getElementById('tab-'+id)).filter(Boolean);
+  const observed = ['market','antibiogram','calculator','pharmacies'].map(id=>document.getElementById('tab-'+id)).filter(Boolean);
   const about = document.getElementById('about');
   if(about) observed.push(about);
 
@@ -2077,5 +2326,696 @@ body.dark-mode footer{background:#080b0f!important;}
 })();
 </script>
 
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+<script>
+/* =========================================================
+   PHARMACIES TAB — viewport-first nationwide map
+   OpenStreetMap + Overpass. Loads only what the user can see,
+   then supports a deliberate "Load all Egypt" action.
+========================================================= */
+(function(){
+  const pharmacies = [
+
+  {
+    name: 'El Ezaby Pharmacies',
+    hotline: '19600',
+    query: 'El Ezaby Pharmacy Egypt',
+    branches: [
+      'Cairo',
+      'Giza',
+      'Qalyubia',
+      'Alexandria',
+      'Beheira',
+      'Sharqia',
+      'Dakahlia',
+      'Gharbia',
+      'Monufia',
+      'Damietta',
+      'Port Said',
+      'Ismailia',
+      'Suez',
+      'Fayoum',
+      'Minya',
+      'Assiut',
+      'Sohag',
+      'Luxor',
+      'Aswan',
+      'North Coast'
+    ]
+  },
+
+  {
+    name: 'El Esaaf Pharmacy',
+    hotline: '02 24829720',
+    query: 'El Esaaf Pharmacy Egypt',
+    branches: [
+      'Cairo',
+      'Giza',
+      'Alexandria',
+      'Dakahlia',
+      'Assiut',
+      'Gharbia',
+      'Sohag',
+      'Aswan',
+      'Port Said',
+      'Kafr El Sheikh',
+      'Monufia',
+      'Damietta',
+      'Beheira',
+      'Fayoum',
+      'Luxor',
+      'Beni Suef'
+    ]
+  },
+
+  {
+    name: 'Al Abdel Latif Al Tarshouby',
+    hotline: '19121',
+    query: 'Al Abdel Latif Al Tarshouby Pharmacies Egypt',
+    branches: [
+      'Cairo',
+      'Dakahlia',
+      'Damietta',
+      'Port Said',
+      'Suez'
+    ]
+  },
+
+  {
+    name: 'Dr. Nabil El Tarshouby Pharmacies',
+    hotline: '16662',
+    query: 'Dr Nabil El Tarshouby Pharmacies Egypt',
+    branches: [
+      'Cairo',
+      'Dakahlia',
+      'Gharbia'
+    ]
+  },
+
+  {
+    name: 'El Tarshouby Pharmacies',
+    hotline: '16130',
+    query: 'El Tarshouby Pharmacies Egypt',
+    branches: [
+      'Dakahlia',
+      'Port Said',
+      'Damietta'
+    ]
+  },
+
+  {
+    name: 'Seif Pharmacies',
+    hotline: '19199',
+    query: 'Seif Pharmacies Egypt',
+    branches: [
+      'Cairo',
+      'Giza',
+      'Alexandria',
+      'Damietta',
+      'North Coast'
+    ]
+  },
+
+  {
+    name: 'Al Dawaa Pharmacies',
+    hotline: '15252',
+    query: 'Al Dawaa Pharmacies Egypt',
+    branches: [
+      'Alexandria'
+    ]
+  },
+
+  {
+    name: 'Sally Pharmacies',
+    hotline: '16409',
+    query: 'Sally Pharmacies Egypt',
+    branches: [
+      'Cairo',
+      'Dakahlia'
+    ]
+  },
+
+  {
+    name: 'Osama Osman Pharmacy',
+    hotline: '055 2377330',
+    query: 'Osama Osman Pharmacy Egypt',
+    branches: [
+      'Sharqia',
+      'Cairo'
+    ]
+  },
+
+  {
+    name: 'Roshdy Pharmacies',
+    hotline: '19661',
+    query: 'Roshdy Pharmacies Egypt',
+    branches: [
+      'Cairo',
+      'Giza',
+      'Alexandria'
+    ]
+  },
+
+  {
+    name: 'Shifaa Pharmacy',
+    hotline: 'Not verified',
+    query: 'Shifaa Pharmacy Egypt',
+    branches: [
+      'Cairo',
+      'Giza',
+      'Qalyubia',
+      'Monufia',
+      'Alexandria',
+      'Matrouh'
+    ]
+  },
+
+  {
+    name: '19011 Pharmacies',
+    hotline: '19011',
+    query: '19011 Pharmacy Egypt',
+    branches: [
+      'Cairo',
+      'Giza',
+      'Alexandria',
+      'Beheira',
+      'Dakahlia',
+      'Sohag',
+      'Monufia',
+      'Ismailia',
+      'Fayoum'
+    ]
+  }
+
+];
+
+  const governorates=[
+    ['Cairo','القاهرة',30.0444,31.2357,10],['Giza','الجيزة',30.0131,31.2089,10],['Alexandria','الإسكندرية',31.2001,29.9187,10],['Qalyubia','القليوبية',30.2807,31.2040,10],
+    ['Dakahlia','الدقهلية',31.0409,31.3785,10],['Sharqia','الشرقية',30.7327,31.7195,10],['Gharbia','الغربية',30.8754,31.0335,10],['Monufia','المنوفية',30.5972,30.9876,10],
+    ['Beheira','البحيرة',30.8481,30.3436,9],['Kafr El Sheikh','كفر الشيخ',31.1107,30.9388,10],['Damietta','دمياط',31.4165,31.8133,10],['Port Said','بورسعيد',31.2653,32.3019,10],
+    ['Ismailia','الإسماعيلية',30.5965,32.2715,10],['Suez','السويس',29.9668,32.5498,10],['Faiyum','الفيوم',29.3084,30.8428,10],['Beni Suef','بني سويف',29.0661,31.0994,10],
+    ['Minya','المنيا',28.1099,30.7503,10],['Asyut','أسيوط',27.1783,31.1859,10],['Sohag','سوهاج',26.5591,31.6957,10],['Qena','قنا',26.1551,32.7160,10],
+    ['Luxor','الأقصر',25.6872,32.6396,11],['Aswan','أسوان',24.0889,32.8998,10],['Red Sea','البحر الأحمر',27.2579,33.8116,8],['New Valley','الوادي الجديد',25.4420,30.5460,7],
+    ['Matrouh','مطروح',31.3543,27.2373,8],['North Sinai','شمال سيناء',30.0444,33.8280,8],['South Sinai','جنوب سيناء',28.5392,33.9500,8]
+  ];
+
+  const endpoints=[
+    'https://overpass-api.de/api/interpreter',
+    'https://overpass.kumi.systems/api/interpreter',
+    'https://overpass.private.coffee/api/interpreter'
+  ];
+
+  let map=null, markerLayer=null, initialized=false, loading=false, allLoaded=false;
+  const markers=new Map(), loadedTiles=new Set();
+  let lastMoveTimer=null;
+
+  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+  const status=(text,busy=false)=>{
+    const el=document.getElementById('pharmacyStatus'); if(!el)return;
+    el.innerHTML=busy?'<span class="pharmacy-loading-dot"></span>'+esc(text):esc(text);
+  };
+  const count=()=>{const el=document.getElementById('pharmacyCount');if(el)el.textContent=markers.size.toLocaleString();};
+
+  function initMap(){
+    if(initialized)return true;
+    const el=document.getElementById('pharmacyMap');
+    if(!el || typeof L==='undefined') return false;
+    map=L.map(el,{preferCanvas:true,zoomControl:true,minZoom:5,maxZoom:19}).setView([26.8206,30.8025],6);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+      maxZoom:19,attribution:'&copy; OpenStreetMap contributors'
+    }).addTo(map);
+    markerLayer=L.markerClusterGroup({
+      chunkedLoading:true,chunkInterval:80,chunkDelay:20,maxClusterRadius:48,
+      showCoverageOnHover:false,spiderfyOnMaxZoom:true,disableClusteringAtZoom:17
+    }).addTo(map);
+    initialized=true;
+    map.on('moveend',()=>{
+      clearTimeout(lastMoveTimer);
+      lastMoveTimer=setTimeout(()=>loadVisibleArea(false),450);
+    });
+    setTimeout(()=>map.invalidateSize(),150);
+    return true;
+  }
+
+  function renderGovernorates(){
+    const box=document.getElementById('governorateGrid'); if(!box || box.children.length)return;
+    governorates.forEach(g=>{
+      const b=document.createElement('button'); b.type='button'; b.className='gov-btn';
+      b.innerHTML=`<span>${esc(g[1])}</span><small>${esc(g[0])}</small>`;
+      b.onclick=async()=>{
+        document.querySelectorAll('.gov-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');
+        if(!initMap())return;
+        map.setView([g[2],g[3]],g[4]);
+        await loadVisibleArea(true,g[1]);
+      };
+      box.appendChild(b);
+    });
+  }
+
+  function renderCards(){
+
+  const box = document.getElementById('pharmacyCards');
+
+  if(!box) return;
+
+  box.innerHTML = pharmacies.map((p,i) => `
+
+    <div class="pharmacy-card">
+
+      <h3>
+        <i class="fa-solid fa-prescription-bottle-medical"></i>
+        ${esc(p.name)}
+      </h3>
+
+      <!-- Hotline -->
+      <div class="pharm-meta">
+
+        <div class="hotline-row">
+          <i class="fa-solid fa-phone-volume"></i>
+
+          <span>
+            <strong>Hotline:</strong>
+            ${esc(p.hotline)}
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <!-- Branches -->
+      <div class="pharmacy-branches">
+
+        <div class="branches-title">
+          <i class="fa-solid fa-location-dot"></i>
+
+          <span>
+            Branch Locations
+          </span>
+
+        </div>
+
+
+        <div class="branches-list">
+
+          ${
+            p.branches.map((branch,index) => `
+
+              <div class="branch-item">
+
+                <span class="branch-number">
+                  ${index + 1}
+                </span>
+
+                <span class="branch-address">
+                  ${esc(branch)}
+                </span>
+
+              </div>
+
+            `).join('')
+          }
+
+        </div>
+
+      </div>
+
+
+      <!-- Buttons -->
+      <div class="pharmacy-actions">
+
+        <button
+          class="pharm-map-btn"
+          type="button"
+          onclick="showPharmacy(${i})"
+        >
+          <i class="fa-solid fa-map-location-dot"></i>
+
+          Show on map
+
+        </button>
+
+
+        ${
+          p.hotline !== 'Not verified'
+
+          ?
+
+          `
+          <a
+            class="pharm-call-btn"
+            href="tel:${p.hotline.replace(/[^0-9+]/g,'')}"
+          >
+
+            <i class="fa-solid fa-phone"></i>
+
+            Call
+
+          </a>
+          `
+
+          :
+
+          ''
+        }
+
+      </div>
+
+    </div>
+
+  `).join('');
+
+}
+  function coords(el){
+    if(el.type==='node' && Number.isFinite(+el.lat) && Number.isFinite(+el.lon)) return [+el.lat,+el.lon];
+    if(el.center && Number.isFinite(+el.center.lat) && Number.isFinite(+el.center.lon)) return [+el.center.lat,+el.center.lon];
+    return null;
+  }
+
+  function addResults(elements){
+    let added=0;
+    for(const el of (elements||[])){
+      const p=coords(el); if(!p)return;
+      const key=`${el.type}:${el.id}`; if(markers.has(key))continue;
+      const t=el.tags||{};
+      const name=t.name || t['name:ar'] || t['name:en'] || 'Pharmacy';
+      const address=[t['addr:housenumber'],t['addr:street'],t['addr:suburb'],t['addr:district'],t['addr:city'],t['addr:postcode']].filter(Boolean).join(', ');
+      const phone=t.phone || t['contact:phone'] || '';
+      let html=`<div class="pharmacy-popup-title">${esc(name)}</div>`;
+      if(address)html+=`<div class="pharmacy-popup-address">${esc(address)}</div>`;
+      if(phone)html+=`<div class="pharmacy-popup-address"><strong>Tel:</strong> ${esc(phone)}</div>`;
+      const m=L.marker(p).bindPopup(html); markerLayer.addLayer(m); markers.set(key,m); added++;
+    }
+    count(); return added;
+  }
+
+  async function overpass(query,timeout=45){
+    let last=null;
+    for(const ep of endpoints){
+      const controller=new AbortController(), timer=setTimeout(()=>controller.abort(),timeout*1000);
+      try{
+        const url=ep+'?data='+encodeURIComponent(query);
+        const r=await fetch(url,{mode:'cors',signal:controller.signal});
+        clearTimeout(timer);
+        if(!r.ok)throw new Error('HTTP '+r.status);
+        return await r.json();
+      }catch(e){clearTimeout(timer);last=e;}
+    }
+    throw last || new Error('No Overpass server available');
+  }
+
+  function tileBounds(bounds){
+    const south=Math.max(22,bounds.getSouth()), north=Math.min(32,bounds.getNorth());
+    const west=Math.max(24,bounds.getWest()), east=Math.min(37,bounds.getEast());
+    if(south>=north || west>=east)return [];
+    // 0.5° tiles keep every request small enough for mobile/desktop browsers.
+    const out=[];
+    const step=.5;
+    const s0=Math.floor(south/step)*step, n0=Math.ceil(north/step)*step;
+    const w0=Math.floor(west/step)*step, e0=Math.ceil(east/step)*step;
+    for(let s=s0;s<n0;s+=step) for(let w=w0;w<e0;w+=step){
+      const n=Math.min(s+step,north), e=Math.min(w+step,east);
+      if(n>s && e>w)out.push([+s.toFixed(2),+w.toFixed(2),+n.toFixed(2),+e.toFixed(2)]);
+    }
+    return out;
+  }
+
+  async function loadTile(b){
+    const key=b.join(','); if(loadedTiles.has(key))return 0;
+    loadedTiles.add(key);
+    const [s,w,n,e]=b;
+    const q=`[out:json][timeout:40];(nwr["amenity"="pharmacy"](${s},${w},${n},${e});nwr["healthcare"="pharmacy"](${s},${w},${n},${e}););out center tags;`;
+    try{const data=await overpass(q,45);return addResults(data.elements||[]);}
+    catch(err){loadedTiles.delete(key);console.warn('Overpass tile failed',key,err);return 0;}
+  }
+
+  async function loadTiles(tiles,parallel=2){
+    let failed=0;
+    for(let i=0;i<tiles.length;i+=parallel){
+      const batch=tiles.slice(i,i+parallel);
+      const r=await Promise.all(batch.map(async t=>{try{return await loadTile(t)}catch(e){failed++;return 0;}}));
+      status(`جاري تحميل الصيدليات… ${markers.size.toLocaleString()} موقع تم تحميله`,true);
+    }
+    return failed;
+  }
+
+  async function loadVisibleArea(force=false,label='المنطقة الحالية'){
+    if(!initMap()||loading)return;
+    const tiles=tileBounds(map.getBounds());
+    const wanted=tiles.filter(t=>force || !loadedTiles.has(t.join(',')));
+    if(!wanted.length){status(`تم تحميل ${markers.size.toLocaleString()} موقع صيدلية في المنطقة.`);return;}
+    loading=true; status(`جاري تحميل صيدليات ${label}…`,true);
+    await loadTiles(wanted,2); loading=false;
+    status(`تم تحميل ${markers.size.toLocaleString()} موقع صيدلية. حرّكي الخريطة لتحميل المناطق الجديدة.`);
+  }
+
+  window.loadEgyptPharmacies=async function(){
+    if(!initMap()||loading)return;
+    loading=true; allLoaded=false;
+    map.fitBounds([[22,24],[32,37]],{padding:[10,10]});
+    status('جاري تحميل صيدليات مصر على دفعات… قد يستغرق هذا وقتاً لأن البيانات عامة وكبيرة.',true);
+    // Start with a 1° grid for the whole country, sequentially in small batches.
+    const tiles=[]; const step=1;
+    for(let s=22;s<32;s+=step)for(let w=24;w<37;w+=step)tiles.push([s,w,Math.min(s+step,32),Math.min(w+step,37)]);
+    await loadTiles(tiles,2);
+    loading=false; allLoaded=true;
+    status(`اكتمل تحميل البيانات المتاحة: ${markers.size.toLocaleString()} صيدلية/موقع.`);
+  };
+
+  async function search(query,label){
+    if(!initMap())return;
+    status(`جاري البحث عن ${label}…`,true);
+    try{
+      const url='https://nominatim.openstreetmap.org/search?format=jsonv2&countrycodes=eg&limit=12&q='+encodeURIComponent(query);
+      const r=await fetch(url,{headers:{'Accept-Language':'ar,en;q=0.8'}}); const data=await r.json();
+      const bounds=[];
+      data.forEach(x=>{
+        const lat=+x.lat,lon=+x.lon;if(!Number.isFinite(lat)||!Number.isFinite(lon))return;
+        L.marker([lat,lon]).addTo(map).bindPopup(`<div class="pharmacy-popup-title">${esc(label)}</div><div class="pharmacy-popup-address">${esc(x.display_name)}</div>`).openPopup();
+        bounds.push([lat,lon]);
+      });
+      if(bounds.length)map.fitBounds(bounds,{padding:[35,35],maxZoom:15});
+      status(bounds.length?`تم العثور على ${bounds.length} نتيجة.`:`لم يتم العثور على نتيجة على الخريطة.`);
+    }catch(e){console.warn(e);status('خدمة البحث غير متاحة مؤقتاً.');}
+  }
+
+  window.showPharmacy=function(i){const p=pharmacies[i];document.getElementById('pharmacySearch').value=p.name.split(' — ')[0];search(p.query,p.name);};
+  window.searchPharmacies=function(){const q=document.getElementById('pharmacySearch').value.trim();if(q)search(q,q);};
+
+  document.addEventListener('DOMContentLoaded',()=>{
+    renderGovernorates();renderCards();count();
+    const input=document.getElementById('pharmacySearch');
+    if(input)input.addEventListener('keydown',e=>{if(e.key==='Enter')searchPharmacies();});
+  });
+
+  const originalSwitchTab=window.switchTab;
+  window.switchTab=function(tabId,button){
+    originalSwitchTab(tabId,button);
+    if(tabId==='pharmacies')setTimeout(()=>{if(initMap()){map.invalidateSize();loadVisibleArea(false,'المنطقة الظاهرة');}},200);
+  };
+})();
+</script>
+
+
+<script>
+/* Premium pointer spotlight — decorative only */
+(function(){
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const spot=document.createElement('div');
+  spot.className='premium-pointer-spot';
+  document.body.appendChild(spot);
+  let x=-300,y=-300,tx=x,ty=y;
+  document.addEventListener('pointermove',e=>{tx=e.clientX;ty=e.clientY},{passive:true});
+  function frame(){x+=(tx-x)*.10;y+=(ty-y)*.10;spot.style.transform=`translate3d(${x-130}px,${y-130}px,0)`;requestAnimationFrame(frame)}
+  frame();
+})();
+</script>
+<style>
+.premium-pointer-spot{position:fixed;width:260px;height:260px;border-radius:50%;pointer-events:none;z-index:9998;background:radial-gradient(circle,rgba(201,21,34,.075),transparent 66%);mix-blend-mode:multiply;opacity:.65;will-change:transform;}
+body.dark-mode .premium-pointer-spot{opacity:.35;mix-blend-mode:screen;background:radial-gradient(circle,rgba(255,80,90,.09),transparent 66%)}
+@media(max-width:800px){.premium-pointer-spot{display:none}}
+/* =====================================================
+   PHARMACY BRANCH LOCATIONS
+===================================================== */
+
+.hotline-row{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    color:var(--text-main);
+    font-size:.82rem;
+    margin-bottom:10px;
+}
+
+.hotline-row i{
+    color:var(--primary-red);
+    font-size:.9rem;
+}
+
+.pharmacy-branches{
+    margin-top:12px;
+    padding-top:12px;
+    border-top:1px solid var(--border-color);
+}
+
+.branches-title{
+    display:flex;
+    align-items:center;
+    gap:7px;
+
+    color:var(--primary-dark-red);
+
+    font-size:.78rem;
+    font-weight:800;
+
+    margin-bottom:9px;
+}
+
+.branches-title i{
+    font-size:.82rem;
+}
+
+.branches-list{
+    display:flex;
+    flex-direction:column;
+    gap:7px;
+
+    max-height:210px;
+
+    overflow-y:auto;
+
+    padding-right:4px;
+}
+
+
+/* Individual branch */
+
+.branch-item{
+    display:flex;
+    align-items:flex-start;
+    gap:8px;
+
+    padding:8px 9px;
+
+    border-radius:9px;
+
+    background:rgba(211,47,47,.035);
+
+    border:1px solid rgba(211,47,47,.07);
+
+    transition:
+        transform .25s ease,
+        background .25s ease,
+        border-color .25s ease;
+}
+
+.branch-item:hover{
+    transform:translateX(-3px);
+
+    background:rgba(211,47,47,.075);
+
+    border-color:rgba(211,47,47,.18);
+}
+
+
+/* Number */
+
+.branch-number{
+    width:21px;
+    height:21px;
+
+    min-width:21px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:50%;
+
+    background:var(--primary-red);
+
+    color:#fff;
+
+    font-size:.62rem;
+    font-weight:800;
+
+    box-shadow:
+        0 4px 10px rgba(211,47,47,.18);
+}
+
+
+/* Address */
+
+.branch-address{
+    color:var(--text-muted);
+
+    font-size:.71rem;
+
+    line-height:1.5;
+
+    flex:1;
+}
+
+
+/* Premium scrollbar */
+
+.branches-list::-webkit-scrollbar{
+    width:4px;
+}
+
+.branches-list::-webkit-scrollbar-track{
+    background:transparent;
+}
+
+.branches-list::-webkit-scrollbar-thumb{
+    background:rgba(211,47,47,.35);
+
+    border-radius:20px;
+}
+
+.branches-list::-webkit-scrollbar-thumb:hover{
+    background:var(--primary-red);
+}
+
+
+/* Dark mode */
+
+body.dark-mode .branch-item{
+    background:rgba(255,255,255,.035);
+
+    border-color:rgba(255,255,255,.08);
+}
+
+body.dark-mode .branch-item:hover{
+    background:rgba(255,255,255,.065);
+
+    border-color:rgba(255,255,255,.13);
+}
+
+body.dark-mode .branch-address{
+    color:#aeb6bf;
+}
+
+body.dark-mode .hotline-row{
+    color:#f1f3f5;
+}
+
+
+/* Mobile */
+
+@media(max-width:700px){
+
+    .branches-list{
+        max-height:190px;
+    }
+
+    .branch-address{
+        font-size:.68rem;
+    }
+
+}
+</style>
 </body>
 </html>
