@@ -798,7 +798,7 @@ body{
   padding-bottom:9px!important;
   background:rgba(23,27,33,.82)!important;
 }
-..header-inner{
+.header-inner{
   max-width:1400px;
   min-height:52px;
   gap:10px;
@@ -1420,6 +1420,72 @@ p.tagline, .tagline {
   font-size: 0.70rem !important; /* يمكنك تصغير الرقم حسب الرغبة */
   max-width: 270px;              /* يضمن تحكم أفضل في المساحة */
   line-height: 1.25;
+}
+/* ترتيب زر Search وزر Load all Egypt قصاد بعض في الموبايل */
+@media (max-width: 768px) {
+  .search-actions, 
+  .pharmacy-search-buttons,
+  div:has(> button:contains("Search")) {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 10px !important;
+    width: 100% !important;
+  }
+
+  .search-actions button,
+  .pharmacy-search-buttons button,
+  button[onclick*="Search"],
+  button[onclick*="Egypt"] {
+    flex: 1 !important;
+    width: 50% !important;
+    padding: 10px 8px !important;
+    font-size: 0.85rem !important;
+    white-space: nowrap !important;
+  }
+}
+/* ==========================================
+   ضبط كروت الصيدليات وتوحيد الارتفاع والأزرار
+   ========================================== */
+
+/* الشبكة الرئيسية: كل كروت الصف الواحد بياخدوا نفس الارتفاع */
+.pharm-chains-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)) !important;
+  gap: 16px !important;
+  align-items: stretch !important; /* توحيد ارتفاع الكروت في الصف */
+}
+
+/* الكارت نفسه: مرن ويوزع العناصر من الأعلى للأسفل */
+.pharm-chain-card {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  height: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* المنطقة الوسطى (التي تحتوي على الفروع والمحافظات):
+   تأخذ باقي مساحة الكارت، وتفتح سكرول لو الفروع كثيرة بدون ما تكبر الكارت */
+.pharm-chain-card > div:not(.pharm-chain-actions):not(.pharm-chain-name):not(:first-child) {
+  flex: 1 1 auto !important;
+  height: 140px !important;       /* ارتفاع موحد لمنطقة الفروع */
+  max-height: 140px !important;
+  overflow-y: auto !important;    /* إظهار سكرول داخلي عند كثرة الفروع */
+  margin: 10px 0 !important;
+}
+
+/* تثبيت شريط الأزرار في القاع دائماً بنفس المحاذاة */
+.pharm-chain-actions {
+  margin-top: auto !important;
+  display: flex !important;
+  gap: 8px !important;
+  padding-top: 10px !important;
+}
+
+.pharm-chain-actions button,
+.pharm-chain-actions a {
+  flex: 1 !important;
+  white-space: nowrap !important;
 }
 </style>
 </head>
